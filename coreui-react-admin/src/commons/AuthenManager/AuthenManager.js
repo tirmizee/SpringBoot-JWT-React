@@ -6,11 +6,15 @@ class AuthenManager {
     this.authenticated = false;
   }
 
-  login(callback) {
-    APIManager.methodGET();
-    this.authenticated = true;
-    localStorage.setItem('AccessToken', 'AAAAAA');
-    callback();
+  login(usernameAndPasswordBase64, callback) {
+    const headers = { 
+      'Authorization' : `Basic ${usernameAndPasswordBase64}`
+    };
+    APIManager.methodPOST('http://localhost:8888/jwt/auth/token', {}, {headers}, callback);
+  }
+
+  setAuthenticated(authenticated){
+    this.authenticated = authenticated;
   }
 
   isAuthenticated(){

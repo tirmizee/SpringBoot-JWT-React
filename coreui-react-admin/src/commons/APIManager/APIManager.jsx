@@ -8,6 +8,13 @@ const APIManager = {
       .then(res => {
 
       });
+  },
+  methodPOST(url, data, config, callback) {
+    Axios
+      .post(url, data, config)
+      .then(res => {
+        callback(res);
+      });
   }
 
 }

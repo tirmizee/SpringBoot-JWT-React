@@ -24,16 +24,19 @@ class Login extends Component {
 
   onSubmitForm(e){
     e.preventDefault();
-    const {username , password} = this.state;
 
-    if(username == 'tirmizee' && password == 'tirmizee'){
-    
-      alert(localStorage.getItem('AccessToken'));
-      AuthenManager.login(() => { 
+    const {username , password} = this.state;
+    let usernameAndPassword = username + ':' + password;
+    let usernameAndPasswordBase64 = btoa(usernameAndPassword);
+
+    AuthenManager.login(usernameAndPasswordBase64, (response) => {
+      if (response.status == 200 && response.data.status){
+        AuthenManager.setAuthenticated(true);
+        localStorage.setItem('AccessToken', response.data.data.token);
         this.props.history.push('/'); 
-      });
-      
-    }
+      }
+    });
+
   }
 
   render() {
