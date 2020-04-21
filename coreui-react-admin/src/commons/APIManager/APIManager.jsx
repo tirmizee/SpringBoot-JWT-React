@@ -15,7 +15,7 @@ const APIManager = {
       .then(res => {
         callback(res);
       });
-  }
+  } 
 
 }
 
