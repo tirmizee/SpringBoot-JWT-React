@@ -2,11 +2,11 @@ import Axios from 'axios';
 
 const APIManager = { 
   
-  methodGET(){
+  methodGET(url, config, callback){
     Axios
-      .get('http://www.mocky.io/v2/5e9ca14830000059000a7f2d')
+      .get(url, config)
       .then(res => {
-
+        callback(res);
       });
   },
   methodPOST(url, data, config, callback) {
@@ -15,7 +15,7 @@ const APIManager = {
       .then(res => {
         callback(res);
       });
-  } 
+  }
 
 }
 

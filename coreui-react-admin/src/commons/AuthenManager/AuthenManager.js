@@ -2,17 +2,28 @@ import APIManager from '../APIManager'
 
 class AuthenManager { 
 
-  constructor(props) {
-    this.token = undefined;
-  }
-
   login(usernameAndPasswordBase64, callback) {
     const headers = { 'Authorization' : `Basic ${usernameAndPasswordBase64}` };
     APIManager.methodPOST('http://localhost:8888/jwt/auth/token', {}, {headers}, callback);
   }
 
+  logout(callback) {
+    const headers = { 'Authorization' : `Bearer ${localStorage.getItem('AccessToken')}` };
+    APIManager.methodGET('http://localhost:8888/jwt/auth/token/revoke', {headers}, callback);
+  }
+
   setAuthenticated(token){
     localStorage.setItem('AccessToken', token);
+  }
+
+  getCurrentUser(){
+    try {
+      let token = localStorage.getItem('AccessToken');
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (error) {
+      console.log(error)
+      return null;
+    }
   }
 
   isAuthenticated() {

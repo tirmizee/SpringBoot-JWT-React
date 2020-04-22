@@ -2,6 +2,7 @@ import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import * as router from 'react-router-dom';
 import { Container } from 'reactstrap';
+import AuthenManager from '../../commons/AuthenManager';
 
 import {
   AppAside,
@@ -29,11 +30,17 @@ class DefaultLayout extends Component {
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   signOut(e) {
-    e.preventDefault()
-    this.props.history.push('/login')
+    e.preventDefault();
+    AuthenManager.logout((response) => {
+      localStorage.removeItem('AccessToken');
+      this.props.history.push('/login');
+    });
+   
   }
 
   render() {
+    let authorities = AuthenManager.getCurrentUser().authorities;
+    let navAuthority = { items : navigation.items.filter(e => authorities.includes(e.authority))};
     return (
       <div className="app">
         <AppHeader fixed>
@@ -46,7 +53,7 @@ class DefaultLayout extends Component {
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-            <AppSidebarNav navConfig={navigation} {...this.props} router={router}/>
+            <AppSidebarNav navConfig={navAuthority} {...this.props} router={router}/>
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />
@@ -57,16 +64,15 @@ class DefaultLayout extends Component {
               <Suspense fallback={this.loading()}>
                 <Switch>
                   {routes.map((route, idx) => {
-                    return route.component ? (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        render={props => (
-                          <route.component {...props} />
-                        )} />
-                    ) : (null);
+                      let hasAuthority = AuthenManager.getCurrentUser().authorities.includes(route.authority);
+                      return route.component ? (
+                        <Route
+                          key={idx}
+                          path={route.path}
+                          exact={route.exact}
+                          name={route.name}
+                          render={props => hasAuthority ? (<route.component {...props} />) : <div>403</div> } />
+                      ) : (null);
                   })}
                   <Redirect from="/" to="/dashboard" />
                 </Switch>

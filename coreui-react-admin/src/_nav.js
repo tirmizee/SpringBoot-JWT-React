@@ -4,6 +4,7 @@ export default {
       name: 'Dashboard',
       url: '/dashboard',
       icon: 'icon-speedometer',
+      authority : "P001",
       badge: {
         variant: 'info',
         text: 'NEW',
@@ -12,6 +13,7 @@ export default {
     {
       title: true,
       name: 'Theme',
+      authority : "P001",
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -21,11 +23,13 @@ export default {
     {
       name: 'Colors',
       url: '/theme/colors',
+      authority : "P001",
       icon: 'icon-drop',
     },
     {
       name: 'Typography',
       url: '/theme/typography',
+      authority : "P001",
       icon: 'icon-pencil',
     },
     {
@@ -276,5 +280,19 @@ export default {
       variant: 'danger',
       attributes: { target: '_blank', rel: "noopener" },
     },
+    {
+      title: true,
+      name: 'Management',
+      wrapper: {            
+        element: '',        
+        attributes: {}       
+      },
+      class: ''             
+    },
+    {
+      name: 'Users',
+      url: '/theme/colors',
+      icon: 'icon-drop',
+    }
   ],
 };
