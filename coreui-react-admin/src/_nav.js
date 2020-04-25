@@ -283,6 +283,7 @@ export default {
     {
       title: true,
       name: 'Management',
+      authority : "P001",
       wrapper: {            
         element: '',        
         attributes: {}       
@@ -291,7 +292,8 @@ export default {
     },
     {
       name: 'Users',
-      url: '/theme/colors',
+      authority : "P001",
+      url: '/users',
       icon: 'icon-drop',
     }
   ],

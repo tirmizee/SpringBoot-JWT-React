@@ -77,8 +77,8 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/charts', name: 'Charts', component: Charts },
-  { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User },
+  { path: '/users', exact: true,  name: 'Users', component: Users, authority: "P001"},
+  { path: '/users/:id', exact: true, name: 'User Details', component: User, authority: "P001" },
 ];
 
 export default routes;

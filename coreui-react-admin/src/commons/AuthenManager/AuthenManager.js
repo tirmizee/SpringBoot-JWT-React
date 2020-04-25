@@ -1,16 +1,35 @@
+import Axios from 'axios';
 import APIManager from '../APIManager'
 import {ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI} from '../../constants'
 
 class AuthenManager { 
 
-  login(usernameAndPasswordBase64, callback) {
+  login(usernameAndPasswordBase64, successCallback, errorCallback) {
     const headers = { 'Authorization' : `Basic ${usernameAndPasswordBase64}` };
-    APIManager.methodPOST(API_LOGIN_URI, {}, {headers}, callback);
+    Axios
+      .post(API_LOGIN_URI, {}, {headers})
+      .then(res => {
+        successCallback(res);
+      })
+      .catch(error => {
+        if (typeof errorCallback !== 'undefined') {
+          errorCallback(error);
+        }
+      });
   }
 
-  logout(callback) {
+  logout(successCallback, errorCallback) {
     const headers = { 'Authorization' : `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
-    APIManager.methodGET(API_LOGOUT_URI, {headers}, callback);
+    Axios
+      .get(API_LOGOUT_URI, {headers})
+      .then(res => {
+        successCallback(res);
+      })
+      .catch(error => {
+        if (typeof errorCallback !== 'undefined') {
+          errorCallback(error);
+        }
+      });
   }
 
   setAuthenticated(token){

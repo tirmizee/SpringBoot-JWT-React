@@ -3,7 +3,7 @@ import Axios from 'axios';
 const APIManager = { 
   
   methodGET(url, config, callback){
-    Axios
+     Axios
       .get(url, config)
       .then(res => {
         callback(res);
