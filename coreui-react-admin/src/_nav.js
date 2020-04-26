@@ -13,7 +13,6 @@ export default {
     {
       title: true,
       name: 'Theme',
-      authority : "P001",
       wrapper: {            // optional wrapper object
         element: '',        // required valid HTML5 element tag
         attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
@@ -23,13 +22,11 @@ export default {
     {
       name: 'Colors',
       url: '/theme/colors',
-      authority : "P001",
       icon: 'icon-drop',
     },
     {
       name: 'Typography',
       url: '/theme/typography',
-      authority : "P001",
       icon: 'icon-pencil',
     },
     {

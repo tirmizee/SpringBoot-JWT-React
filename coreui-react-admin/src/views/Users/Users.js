@@ -1,64 +1,174 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
+import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
+import usersData from './UsersData';
+import BootstrapTable from 'react-bootstrap-table-next';
 
-import usersData from './UsersData'
+const columns = [{
+  dataField: 'id',
+  text: 'Product ID',
+  sort: true
+}, {
+  dataField: 'name',
+  text: 'Product Name',
+  sort: true
+}, {
+  dataField: 'price',
+  text: 'Product Price',
+  sort: true
+}];
 
-function UserRow(props) {
-  
-  const user = props.user
-  const userLink = `/users/${user.id}`
+const defaultSorted = [{
+  dataField: 'name',
+  order: 'desc'
+}];
 
-  const getBadge = (status) => {
-    return status === 'Active' ? 'success' :
-      status === 'Inactive' ? 'secondary' :
-        status === 'Pending' ? 'warning' :
-          status === 'Banned' ? 'danger' :
-            'primary'
-  }
-
-  return (
-    <tr key={user.id.toString()}>
-      <th scope="row"><Link to={userLink}>{user.id}</Link></th>
-      <td><Link to={userLink}>{user.name}</Link></td>
-      <td>{user.registered}</td>
-      <td>{user.role}</td>
-      <td><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
-    </tr>
-  )
-}
+const products = [
+  { id: "1", name: "Pratya", price: 3000 },
+  { id: "2", name: "Pratya", price: 3000 },
+  { id: "3", name: "Pratya", price: 3000 },
+  { id: "4", name: "Pratya", price: 3000 },
+  { id: "5", name: "Pratya", price: 3000 }
+];
 
 class Users extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      collapse: true,
+      search: {
+        username: '',
+        firstName: '',
+        lastName: '',
+        tel: ''
+      }
+    };
+
+    this.toggle = this.toggle.bind(this);
+    this.toggleFade = this.toggleFade.bind(this);
+    this.onChange = this.onChange.bind(this);
+
+  }
+
+  onChange = (e) => {
+    this.setState({
+      search: { [e.target.name]: e.target.value }
+    }, () => console.log(this.state.search));
+  }
+
+  toggle = () => {
+    this.setState({ collapse: !this.state.collapse });
+  }
+
+  toggleFade = () => {
+    this.setState((prevState) => { return { fadeIn: !prevState } });
+  }
+
   render() {
 
-    const userList = usersData.filter((user) => user.id < 10)
+    const { collapse } = this.state;
 
     return (
       <div className="animated fadeIn">
         <Row>
-          <Col xl={6}>
+          <Col lg={12}>
             <Card>
               <CardHeader>
-                <i className="fa fa-align-justify"></i> Users <small className="text-muted">example</small>
+                <strong>Card actions</strong>
+                <div className="card-header-actions">
+                  <a className="card-header-action btn btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className={collapse ? "icon-arrow-down" : "icon-arrow-up"}></i></a>
+                </div>
+              </CardHeader>
+              <Collapse isOpen={collapse} id="collapseExample">
+                <CardBody>
+                  <FormGroup row>
+                    <Col md="2"></Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label htmlFor="Username"><strong>Username</strong></Label>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="fa fa-user"></i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="username" onChange={this.onChange} placeholder="" />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label htmlFor="tel"><strong>Tel</strong></Label>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="fa fa-phone"></i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="tel" onChange={this.onChange} placeholder="" />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                    <Col md="2"></Col>
+                  </FormGroup>
+                  <FormGroup row>
+                    <Col md="2"></Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label htmlFor="firstName"><strong>First Name</strong></Label>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="fa fa-address-book-o"></i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="firstName" onChange={this.onChange} placeholder="" />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <Label htmlFor="lastName"><strong>Last Name</strong></Label>
+                        <InputGroup>
+                          <InputGroupAddon addonType="prepend">
+                            <InputGroupText>
+                              <i className="fa fa-address-book-o"></i>
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <Input type="text" name="lastName" onChange={this.onChange} placeholder="" />
+                        </InputGroup>
+                      </FormGroup>
+                    </Col>
+                    <Col md="2"></Col>
+                  </FormGroup>
+                  <FormGroup>
+                    <center>
+                      <Button type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                      {' '}
+                      <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
+                    </center>
+                  </FormGroup>
+                </CardBody>
+              </Collapse>
+            </Card>
+          </Col>
+        </Row>
+        {/* Data Table */}
+        <Row>
+          <Col lg={12}>
+            <Card>
+              <CardHeader>
+                <strong>Card actions</strong>
               </CardHeader>
               <CardBody>
-                <Table responsive hover>
-                  <thead>
-                    <tr>
-                      <th scope="col">id</th>
-                      <th scope="col">name</th>
-                      <th scope="col">registered</th>
-                      <th scope="col">role</th>
-                      <th scope="col">status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userList.map((user, index) =>
-                      <UserRow key={index} user={user}/>
-                    )}
-                  </tbody>
-                </Table>
+                <BootstrapTable
+                  bootstrap4
+                  keyField="id"
+                  data={products}
+                  columns={columns}
+                  defaultSorted={defaultSorted}
+                />
               </CardBody>
             </Card>
           </Col>
