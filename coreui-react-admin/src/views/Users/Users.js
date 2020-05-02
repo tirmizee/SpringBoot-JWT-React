@@ -1,34 +1,34 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Axios from 'axios';
+import { ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI } from '../../constants'
 import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
 import usersData from './UsersData';
 import BootstrapTable from 'react-bootstrap-table-next';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import DataTable from 'react-data-table-component';
 
-const columns = [{
-  dataField: 'id',
-  text: 'Product ID',
-  sort: true
-}, {
-  dataField: 'name',
-  text: 'Product Name',
-  sort: true
-}, {
-  dataField: 'price',
-  text: 'Product Price',
-  sort: true
-}];
-
-const defaultSorted = [{
-  dataField: 'name',
-  order: 'desc'
-}];
-
-const products = [
-  { id: "1", name: "Pratya", price: 3000 },
-  { id: "2", name: "Pratya", price: 3000 },
-  { id: "3", name: "Pratya", price: 3000 },
-  { id: "4", name: "Pratya", price: 3000 },
-  { id: "5", name: "Pratya", price: 3000 }
+const columns = [
+  {
+    name: 'Order',
+    selector: 'order'
+  },
+  {
+    name: 'Username',
+    selector: 'username',
+    sortable: true,
+  },
+  {
+    name: 'Email',
+    selector: 'email',
+    sortable: true,
+  },
+  {
+    name: 'First Name',
+    selector: 'firstname',
+    sortable: true,
+  }
+  
 ];
 
 class Users extends Component {
@@ -37,6 +37,11 @@ class Users extends Component {
     super(props);
     this.state = {
       collapse: true,
+      loading: false,
+      data: [],
+      totalRows: 0,
+      page : 1,
+      perPage: 10,
       search: {
         username: '',
         firstName: '',
@@ -48,6 +53,8 @@ class Users extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
+    this.handlePerRowsChange = this.handlePerRowsChange.bind(this);
 
   }
 
@@ -65,9 +72,98 @@ class Users extends Component {
     this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
+  handlePageChange = async page => {
+
+    console.log('handlePageChange : ' + page);
+
+    const headers = { 'Authorization': `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
+
+    const { perPage } = this.state;
+
+    Axios
+      .post('http://localhost:8888/jwt/user/all', {page: page - 1, size: perPage}, { headers })
+      .then(res => {
+
+        let users = res.data.content.map((o, i) => {
+          return {
+            order : (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstname: o.firstName
+          };
+        });
+
+        this.setState({
+          loading: false,
+          data: users,
+        });
+
+      })
+   
+  }
+
+  handlePerRowsChange = async (perPage, page) => {
+
+    console.log('handlePerRowsChange : ' + page);
+
+    const headers = { 'Authorization': `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
+
+    Axios
+      .post('http://localhost:8888/jwt/user/all', {page : page - 1, size : perPage}, { headers })
+      .then(res => {
+
+        let users = res.data.content.map((o, i) => {
+          return {
+            order : (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstname: o.firstName
+          };
+        });
+
+        this.setState({
+          loading: false,
+          data: users,
+          perPage,
+        });
+
+      })
+
+  }
+
+  componentDidMount = () => {
+
+    const { page, perPage } = this.state;
+
+    const headers = { 'Authorization': `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
+
+    Axios
+      .post('http://localhost:8888/jwt/user/all', {page : page - 1, size : perPage}, { headers })
+      .then(res => {
+        let users = res.data.content.map((o, i) => {
+          return {
+            order : (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstname: o.firstName
+          };
+        });
+
+        this.setState({
+          data: users,
+          totalRows: res.data.totalElements,
+          loading: false
+        });
+
+      }).catch(error => {});
+  }
+
   render() {
 
-    const { collapse } = this.state;
+    const { collapse, loading, data, totalRows } = this.state;
 
     return (
       <div className="animated fadeIn">
@@ -162,13 +258,21 @@ class Users extends Component {
                 <strong>Card actions</strong>
               </CardHeader>
               <CardBody>
-                <BootstrapTable
-                  bootstrap4
-                  keyField="id"
-                  data={products}
-                  columns={columns}
-                  defaultSorted={defaultSorted}
-                />
+                <Row>
+                  <Col md="12">
+                    <DataTable
+                      columns={columns}
+                      data={data}
+                      progressPending={loading}
+                      pagination
+                      paginationServer
+                      highlightOnHover
+                      paginationTotalRows={totalRows}
+                      onChangeRowsPerPage={this.handlePerRowsChange}
+                      onChangePage={this.handlePageChange}
+                    />
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>

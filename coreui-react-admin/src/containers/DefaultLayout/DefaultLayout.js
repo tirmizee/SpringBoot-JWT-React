@@ -33,6 +33,8 @@ class DefaultLayout extends Component {
     AuthenManager.logout((response) => {
       localStorage.removeItem('AccessToken');
       this.props.history.push('/login');
+    },(error) => {
+      this.props.history.push('/login');
     });
    
   }
