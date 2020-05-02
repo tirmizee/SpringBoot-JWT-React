@@ -1,19 +1,28 @@
 import Axios from 'axios';
+import { ACCESS_TOKEN } from '../../constants'
 
-const APIManager = { 
+
+const APIManager =  { 
   
-  methodGET(url, config, callback){
+  GET : (url, config, callback) => {
      Axios
       .get(url, config)
       .then(res => {
         callback(res);
       });
   },
-  methodPOST(url, data, config, callback) {
+
+  POST : (url, data, callback) => {
+
+    const headers = { 'Authorization': `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
+
     Axios
-      .post(url, data, config)
+      .post(url, data, {headers})
       .then(res => {
         callback(res);
+        if(res.headers['Token-Renew']){
+          localStorage.setItem(ACCESS_TOKEN, res.headers['Token-Renew']);
+        }
       });
   }
 
