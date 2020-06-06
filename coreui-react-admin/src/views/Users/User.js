@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardBody, CardHeader, Col, Row, Table, Collapse } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Row, Input, Collapse, Form, FormGroup, Label, Button } from 'reactstrap';
 
 import usersData from './UsersData'
 
@@ -22,36 +22,83 @@ class User extends Component {
   }
 
   toggleFade() {
-    this.setState((prevState) => { return { fadeIn: !prevState }});
+    this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
   render() {
 
-    const user = usersData.find( user => user.id.toString() === this.props.match.params.id)
-
-    const userDetails = user ? Object.entries(user) : [['id', (<span><i className="text-muted icon-ban"></i> Not found</span>)]]
+    const { data : user } =  this.props.location.state;
 
     return (
       <div className="animated fadeIn">
         <Row>
           <Col lg={12}>
             <Card>
-                <CardHeader>
-                  Card actions
-                  <div className="card-header-actions">
-                    <a href="#" className="card-header-action btn btn-setting"><i className="icon-settings"></i></a>
-                    <a className="card-header-action btn btn-minimize" data-target="#collapseExample" onClick={this.toggle}><i className="icon-arrow-up"></i></a>
-                    <a className="card-header-action btn btn-close" onClick={this.toggleFade}><i className="icon-close"></i></a>
-                  </div>
-                </CardHeader>
-                <Collapse isOpen={this.state.collapse} id="collapseExample">
-                  <CardBody>
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
-                    laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-                    ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
-                  </CardBody>
-                </Collapse>
-              </Card>
+              <CardHeader>
+                <strong>Card actions</strong>
+              </CardHeader>
+              <Collapse isOpen={this.state.collapse} id="collapseExample">
+                <CardBody>
+
+                  <Form action="" method="post" encType="multipart/form-data" className="form-horizontal">
+                    <Row>
+                      <Col md={3}></Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-email">Username</Label>
+                          <Input type="text" value={user.username} name="nf-email" placeholder="" autoComplete="email" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-password">Email</Label>
+                          <Input type="text" value={user.email} name="nf-password" placeholder="" autoComplete="current-password" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3}></Col>
+                    </Row>
+                    <Row>
+                      <Col md={3}></Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-email">First Name</Label>
+                          <Input type="text" value={user.firstName} name="nf-email" placeholder="" autoComplete="email" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-password">Last Name</Label>
+                          <Input type="text" value={user.lastName} name="nf-password" placeholder="" autoComplete="current-password" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3}></Col>
+                    </Row>
+                    <Row>
+                      <Col md={3}></Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-email">Citizent ID</Label>
+                          <Input type="text" id="nf-email" name="nf-email" placeholder="" autoComplete="email" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3} xs={6} sm={12}>
+                        <FormGroup>
+                          <Label htmlFor="nf-password">Tel</Label>
+                          <Input type="text" id="nf-password" name="nf-password" placeholder="" autoComplete="current-password" />
+                        </FormGroup>
+                      </Col>
+                      <Col md={3}></Col>
+                    </Row>
+                    <FormGroup>
+                      <center>
+                        <Button className="mr-1 mb-1 btn btn-info active"><span>Spotify</span></Button>
+                        <Button className="btn-brand text mr-1 mb-1 btn btn-light active"><span>Clear</span></Button>
+                      </center>
+                    </FormGroup>
+                  </Form>
+                </CardBody>
+              </Collapse>
+            </Card>
           </Col>
         </Row>
       </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardBody, CardFooter } from 'reactstrap';
+import { Card, CardBody, CardFooter, Progress } from 'reactstrap';
 import classNames from 'classnames';
 import { mapToCssModules } from 'reactstrap/lib/utils';
 
@@ -23,12 +23,15 @@ const defaultProps = {
   icon: 'fa fa-cogs',
   color: 'primary',
   variant: '0',
+  value: '25',
   link: '#',
 };
 
 class Widget02 extends Component {
   render() {
-    const { className, cssModule, header, mainText, icon, color, footer, link, children, variant, ...attributes } = this.props;
+    const { className, cssModule, header, mainText, icon, color, value, footer, link, children, variant, ...attributes } = this.props;
+
+    const progress = { style: '', color: color, value: value };
 
     // demo purposes only
     const padding = (variant === '0' ? { card: 'p-3', icon: 'p-3', lead: 'mt-2' } : (variant === '1' ? {
@@ -63,6 +66,7 @@ class Widget02 extends Component {
           {blockIcon(card.icon)}
           <div className={lead.classes}>{header}</div>
           <div className="text-muted text-uppercase font-weight-bold font-xs">{mainText}</div>
+          <div>sss</div>
         </CardBody>
         {cardFooter()}
       </Card>

@@ -9,6 +9,13 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import DataTable from 'react-data-table-component';
 
+const sortIcon = <i className="cui-arrow-top icons font-2xl d-block"></i>;
+const actions = (<div>
+  <i className="fa fa-file fa-md"></i>&nbsp;
+  <i className="fa fa-question-circle fa-md"></i>&nbsp;
+  <i className="fa fa-plus fa-md"></i>&nbsp;
+  <i className="fa fa-wrench fa-md"></i>
+</div>);
 const columns = handleClick => [
   {
     name: 'Order',
@@ -19,6 +26,7 @@ const columns = handleClick => [
     name: 'Username',
     selector: 'username',
     sortable: true,
+    left: true,
     maxWidth: '200px',
     style: {
       color: '#202124',
@@ -46,10 +54,10 @@ const columns = handleClick => [
     name: 'Action',
     selector: 'action',
     button: true,
-    width : '250px',
+    width: '250px',
     cell: (row) => (<>
-      <Button className="btn-behance btn-brand icon mr-1 mb-1 btn btn-secondary"  onClick={(e) => handleClick(e, 'btnView', row)}><i className="fa fa-behance"></i></Button>
-      <Button className="btn-spotify btn-brand icon mr-1 mb-1 btn btn-secondary"  onClick={(e) => handleClick(e, 'btnEdit', row)}><i className="fa fa-spotify"></i></Button>
+      <Button className="btn-behance btn-brand icon mr-1 mb-1 btn btn-secondary" onClick={(e) => handleClick(e, 'btnView', row)}><i className="fa fa-behance"></i></Button>
+      <Button className="btn-spotify btn-brand icon mr-1 mb-1 btn btn-secondary" onClick={(e) => handleClick(e, 'btnEdit', row)}><i className="fa fa-spotify"></i></Button>
       <Button className="btn-pinterest btn-brand icon mr-1 mb-1 btn btn-secondary" onClick={(e) => handleClick(e, 'btnDelete', row)}><i className="fa fa-pinterest"></i></Button>
     </>),
   }
@@ -58,7 +66,9 @@ const columns = handleClick => [
 const styles = {
   headRow: {
     style: {
-      border: 'none',
+      borderTopStyle: 'solid',
+      borderTopWidth: '1px',
+      borderTopColor: '#000000'
     }
   },
   headCells: {
@@ -66,6 +76,9 @@ const styles = {
       color: '#202124',
       fontSize: '14px',
     }
+  },
+  cells: {
+    style: {}
   }
 };
 
@@ -78,7 +91,7 @@ class Users extends Component {
       loading: false,
       data: [],
       totalRows: 0,
-      page : 1,
+      page: 1,
       perPage: 10,
       search: {
         username: '',
@@ -91,13 +104,14 @@ class Users extends Component {
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
     this.handleSort = this.handleSort.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClickButton = this.handleClickButton.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handlePerRowsChange = this.handlePerRowsChange.bind(this);
 
   }
- 
+
   toggle = () => {
     this.setState({ collapse: !this.state.collapse });
   }
@@ -106,60 +120,15 @@ class Users extends Component {
     this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
-  handleClickButton = (e, target, data) => {
-    switch (target) {
-      case 'btnView': break;
-      case 'btnEdit': this.props.history.push({ pathname : `/users/${data.username}`, state :{ data: data}}); break;
-      case 'btnDelete': break;
-    }
-  }
-
-  handleChangeInput = (e) => {
-    this.setState({
-      search: { [e.target.name]: e.target.value }
-    }, () => console.log(this.state.search));
-  }
-
-
-  handleSort = (column, sortDirection) => {
-
-    let sort = sortDirection == 'asc' ? 'A' : 'D';
-    let headers = { 'Authorization': `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` };
-    let { perPage, page } = this.state;
-
-    Axios
-      .post('http://localhost:8888/jwt/user/all', {page: page - 1, size: perPage, sort : sort, sortField :column.selector}, { headers })
-      .then(res => {
-
-        let users = res.data.content.map((o, i) => {
-          return {
-            order : (page - 1) * perPage + (i + 1),
-            id: o.userId,
-            email: o.email,
-            username: o.username,
-            firstName: o.firstName
-          };
-        });
-
-        this.setState({
-          loading: false,
-          data: users,
-        });
-
-      })
-
-
-  };
-
-  handlePageChange = async page => {
-
-    const { perPage } = this.state;
+  handleSubmit = (e) => {
+    
+    let { perPage, page, search } = this.state;
 
     let callback = (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
-          order : (page - 1) * perPage + (i + 1),
+          order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
@@ -170,12 +139,82 @@ class Users extends Component {
       this.setState({
         loading: false,
         data: users,
+        perPage : perPage, 
+        totalRows : response.totalElements
       });
-    
     }
+    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, callback);
 
-    ApiManager.POST('http://localhost:8888/jwt/user/all', {page: page - 1, size: perPage}, callback);
+  }
 
+  handleClickButton = (e, target, data) => {
+    switch (target) {
+      case 'btnView': break;
+      case 'btnEdit': this.props.history.push({ pathname: `/users/${data.id}`, state: { data: data } }); break;
+      case 'btnDelete': break;
+    }
+  }
+
+  handleChangeInput = (e) => {
+    this.setState({
+      search: { ...this.state.search, [e.target.name]: e.target.value },
+
+    }, () => console.log(this.state.search));
+  }
+
+
+  handleSort = (column, sortDirection) => {
+
+    let sort = sortDirection == 'asc' ? 'A' : 'D';
+    let { perPage, page, search } = this.state;
+
+    let callback = (response) => {
+
+      let users = response.data.content.map((o, i) => {
+        return {
+          order: (page - 1) * perPage + (i + 1),
+          id: o.userId,
+          email: o.email,
+          username: o.username,
+          firstName: o.firstName
+        };
+      });
+
+      this.setState({
+        loading: false,
+        data: users,
+        perPage : perPage, 
+        totalRows : response.totalElements
+      });
+    }
+    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, sort: sort, sortField: column.selector, search : search }, callback);
+  };
+
+  handlePageChange = async page => {
+
+    const { perPage, search } = this.state;
+
+    let callback = (response) => {
+
+      let users = response.data.content.map((o, i) => {
+        return {
+          order: (page - 1) * perPage + (i + 1),
+          id: o.userId,
+          email: o.email,
+          username: o.username,
+          firstName: o.firstName
+        };
+      });
+
+      this.setState({
+        loading: false,
+        data: users,
+        perPage : perPage, 
+        totalRows : response.totalElements
+      });
+
+    }
+    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, callback);
   }
 
   handlePerRowsChange = async (perPage, page) => {
@@ -186,7 +225,7 @@ class Users extends Component {
 
       let users = response.data.content.map((o, i) => {
         return {
-          order : (page - 1) * perPage + (i + 1),
+          order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
@@ -199,22 +238,19 @@ class Users extends Component {
         data: users,
         perPage,
       });
-    
+
     }
-
-    ApiManager.POST('http://localhost:8888/jwt/user/all', {page : page - 1, size : perPage}, callback);
-
+    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage }, callback);
   }
 
   componentDidMount = () => {
 
     const { page, perPage } = this.state;
-
     let callback = (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
-          order : (page - 1) * perPage + (i + 1),
+          order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
@@ -227,16 +263,14 @@ class Users extends Component {
         totalRows: response.data.totalElements,
         loading: false
       });
-    
+
     }
-
-    ApiManager.POST('http://localhost:8888/jwt/user/all', {page : page - 1, size : perPage}, callback);
-
+    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage }, callback);
   }
 
   render() {
 
-    const { collapse, loading, data, totalRows } = this.state;
+    const { collapse, loading, data, totalRows, search } = this.state;
 
     return (
       <div className="animated fadeIn">
@@ -262,7 +296,7 @@ class Users extends Component {
                               <i className="fa fa-user"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="text" name="username" onChange={this.handleChangeInput} placeholder="" />
+                          <Input type="text" name="username" value={search.username} onChange={this.handleChangeInput} placeholder="" />
                         </InputGroup>
                       </FormGroup>
                     </Col>
@@ -275,7 +309,7 @@ class Users extends Component {
                               <i className="fa fa-phone"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="text" name="tel" onChange={this.handleChangeInput} placeholder="" />
+                          <Input type="text" name="tel" value={search.tel} onChange={this.handleChangeInput} placeholder="" />
                         </InputGroup>
                       </FormGroup>
                     </Col>
@@ -292,7 +326,7 @@ class Users extends Component {
                               <i className="fa fa-address-book-o"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="text" name="firstName" onChange={this.handleChangeInput} placeholder="" />
+                          <Input type="text" name="firstName" value={search.firstName} onChange={this.handleChangeInput} placeholder="" />
                         </InputGroup>
                       </FormGroup>
                     </Col>
@@ -305,7 +339,7 @@ class Users extends Component {
                               <i className="fa fa-address-book-o"></i>
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input type="text" name="lastName" onChange={this.handleChangeInput} placeholder="" />
+                          <Input type="text" name="lastName" value={search.lastName} onChange={this.handleChangeInput} placeholder="" />
                         </InputGroup>
                       </FormGroup>
                     </Col>
@@ -313,8 +347,8 @@ class Users extends Component {
                   </FormGroup>
                   <FormGroup>
                     <center>
-                      <button class="btn-twitter btn-brand text mr-1 mb-1 btn btn-secondary"><span>Sreach</span></button>
-                      <button class="btn-youtube btn-brand text mr-1 mb-1 btn btn-secondary"><span>Clear</span></button>
+                      <Button className="btn-twitter btn-brand text mr-1 mb-1 btn btn-secondary" onClick={this.handleSubmit}><span>Sreach</span></Button>
+                      <Button className="btn-youtube btn-brand text mr-1 mb-1 btn btn-secondary"><span>Clear</span></Button>
                     </center>
                   </FormGroup>
                 </CardBody>
@@ -333,18 +367,20 @@ class Users extends Component {
                 <Row>
                   <Col md="12">
                     <DataTable
-                      columns={columns(this.handleClickButton)}
                       data={data}
+                      columns={columns(this.handleClickButton)}
                       progressPending={loading}
-                      pagination
-                      paginationServer
-                      highlightOnHover
-                      pointerOnHover
+                      actions={actions}
+                      sortIcon={sortIcon}
                       onSort={this.handleSort}
                       customStyles={styles}
                       paginationTotalRows={totalRows}
                       onChangeRowsPerPage={this.handlePerRowsChange}
                       onChangePage={this.handlePageChange}
+                      pagination
+                      paginationServer
+                      highlightOnHover
+                      pointerOnHover
                     />
                   </Col>
                 </Row>

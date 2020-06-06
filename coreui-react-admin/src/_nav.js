@@ -292,6 +292,12 @@ export default {
       authority : "P001",
       url: '/users',
       icon: 'icon-drop',
+    },
+    {
+      name: 'Products',
+      authority : "P001",
+      url: '/products',
+      icon: 'icon-drop',
     }
   ],
 };

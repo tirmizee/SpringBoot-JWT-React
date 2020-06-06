@@ -41,7 +41,10 @@ class DefaultHeader extends Component {
         </Nav>
         <Nav className="ml-auto" navbar>
           <NavItem className="d-md-down-none">
-            <NavLink to="#" className="nav-link"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
+            <NavLink to="#" className="nav-link">
+              <i className="icon-bell"></i>
+              <Badge pill color="danger">2</Badge>
+            </NavLink>
           </NavItem>
           <NavItem className="d-md-down-none">
             <NavLink to="#" className="nav-link"><i className="icon-list"></i></NavLink>
