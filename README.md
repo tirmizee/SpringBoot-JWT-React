@@ -2,6 +2,6 @@
 
 ### Technology 
 
-- spring Boot 2 (Backend)
+  #### spring Boot 2 (Backend)
 
-- ReactJS (Fontend)
+  #### ReactJS (Fontend)
