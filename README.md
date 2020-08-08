@@ -1,3 +1,7 @@
 # SpringBoot-React-JWT
 
-#### Authentication With JSON Web Tokens (JWT)
+### Technology 
+
+- spring Boot 2 (Backend)
+
+- ReactJS (Fontend)
