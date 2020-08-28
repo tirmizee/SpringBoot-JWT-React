@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<query name="PERMISSION.FIND_BY_USERNAME"> 
+		<![CDATA[
+			SELECT p 
+			FROM Permission p
+			INNER JOIN RoleMapPermission rp ON p.perId = rp.id.perId
+			INNER JOIN Role r ON r.roleId = rp.id.roleId
+			INNER JOIN User u ON u.fkRoleId = r.roleId
+			WHERE u.username = :username
+		]]>
+	</query>
+</hibernate-mapping>
