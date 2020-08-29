@@ -1,7 +1,7 @@
 # SpringBoot-React-JWT
 
 
-### Technology 
+### Technologies
 
 - #### Back-end (Spring Boot 2) 
 
