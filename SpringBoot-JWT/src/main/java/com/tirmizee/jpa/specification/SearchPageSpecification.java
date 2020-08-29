@@ -11,15 +11,15 @@ import org.springframework.data.domain.Sort;
  * @param <B> Object type of SearchPageable
  * @param <T> Domain object
  */
-public abstract class SearchPageSpecification<B extends SearchPageable, T> extends SearchBodySpecification<B,T> {
+public abstract class SearchPageSpecification<S extends SearchPageable<?>, T> extends SearchSpecification<S,T> {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final String DEFUALT_ASC = "A";
-	public static final String DEFUALT_DESC = "D";
+	public static final String DEFUALT_DERECTION_ASC = "A";
+	public static final String DEFUALT_DERECTION_DESC = "D";
 
-	public SearchPageSpecification(B serachBody) {
-		super(serachBody);
+	public SearchPageSpecification(S serachPage) {
+		super(serachPage);
 	}
 	
 	/**
@@ -34,17 +34,17 @@ public abstract class SearchPageSpecification<B extends SearchPageable, T> exten
 	 */
 	protected Sort buildSort(String sort, String sortField) {
 		switch (StringUtils.trimToEmpty(sort)) {
-			case DEFUALT_ASC  : return Sort.by(Sort.Order.asc(sortField));
-			case DEFUALT_DESC : return Sort.by(Sort.Order.desc(sortField));
+			case DEFUALT_DERECTION_ASC  : return Sort.by(Sort.Order.asc(sortField));
+			case DEFUALT_DERECTION_DESC : return Sort.by(Sort.Order.desc(sortField));
 			default : return Sort.by(Sort.Order.asc(sortField));
 		}
 	}
 	
 	public Pageable getPageable() {
-		Integer page = getSearchBody().getPage();
-		Integer size = getSearchBody().getSize();
-		String sort = getSearchBody().getSort();
-		String sortField = sortProperty(getSearchBody().getSortField());
+		Integer page = getSearch().getPage();
+		Integer size = getSearch().getSize();
+		String sort = getSearch().getSort();
+		String sortField = this.sortProperty(this.getSearch().getSortField());
 		return PageRequest.of(page, size, buildSort(sort, sortField));
 	}
 
