@@ -1,5 +1,4 @@
 import Axios from 'axios';
-import APIManager from '../APIManager'
 import {ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI} from '../../constants'
 
 class AuthenManager { 
@@ -23,6 +22,7 @@ class AuthenManager {
     Axios
       .get(API_LOGOUT_URI, {headers})
       .then(res => {
+        localStorage.removeItem(ACCESS_TOKEN);
         successCallback(res);
       })
       .catch(error => {

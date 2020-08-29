@@ -4,7 +4,7 @@ import Axios from 'axios';
 import { ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI } from '../../constants'
 import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
 import usersData from './UsersData';
-import ApiManager from '../../commons/APIManager';
+import {POST,GET} from '../../commons/APIManager';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import DataTable from 'react-data-table-component';
@@ -49,6 +49,12 @@ const columns = handleClick => [
     name: 'First Name',
     selector: 'firstName',
     sortable: true,
+  },
+  {
+    name: 'Status',
+    selector: 'enabled',
+    sortable: true,
+    cell: (row) => row.enabled ? (<span className="badge badge-success">Active</span>) : (<span className="badge badge-danger">Inactive</span>)
   },
   {
     name: 'Action',
@@ -124,7 +130,7 @@ class Users extends Component {
     
     let { perPage, page, search } = this.state;
 
-    let callback = (response) => {
+    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search || {} }, (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
@@ -142,8 +148,7 @@ class Users extends Component {
         perPage : perPage, 
         totalRows : response.totalElements
       });
-    }
-    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, callback);
+    });
 
   }
 
@@ -166,9 +171,16 @@ class Users extends Component {
   handleSort = (column, sortDirection) => {
 
     let sort = sortDirection == 'asc' ? 'A' : 'D';
-    let { perPage, page, search } = this.state;
+    let { perPage, page, search = {} } = this.state;
+    let data = { 
+      page: page - 1, 
+      size: perPage,
+      sort: sort, 
+      sortField: column.selector, 
+      search : search 
+    }
 
-    let callback = (response) => {
+    POST('http://localhost:8888/jwt/user/all', data, (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
@@ -186,15 +198,15 @@ class Users extends Component {
         perPage : perPage, 
         totalRows : response.totalElements
       });
-    }
-    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, sort: sort, sortField: column.selector, search : search }, callback);
+    });
+
   };
 
   handlePageChange = async page => {
 
-    const { perPage, search } = this.state;
+    const { perPage, search = {} } = this.state;
 
-    let callback = (response) => {
+    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
@@ -213,15 +225,15 @@ class Users extends Component {
         totalRows : response.totalElements
       });
 
-    }
-    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, callback);
+    });
+
   }
 
   handlePerRowsChange = async (perPage, page) => {
 
     console.log('handlePerRowsChange : ' + page);
 
-    let callback = (response) => {
+    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : {}}, (response) => {
 
       let users = response.data.content.map((o, i) => {
         return {
@@ -239,22 +251,22 @@ class Users extends Component {
         perPage,
       });
 
-    }
-    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage }, callback);
+    });
   }
 
   componentDidMount = () => {
 
-    const { page, perPage } = this.state;
-    let callback = (response) => {
-
+    const { page, perPage, search = {}} = this.state;
+   
+    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search:search }).then(response => {
       let users = response.data.content.map((o, i) => {
         return {
           order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
-          firstName: o.firstName
+          firstName: o.firstName,
+          enabled : o.enabled
         };
       });
 
@@ -263,9 +275,8 @@ class Users extends Component {
         totalRows: response.data.totalElements,
         loading: false
       });
+    });
 
-    }
-    ApiManager.POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage }, callback);
   }
 
   render() {

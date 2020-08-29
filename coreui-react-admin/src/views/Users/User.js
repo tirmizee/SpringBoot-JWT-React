@@ -28,6 +28,7 @@ class User extends Component {
   render() {
 
     const { data : user } =  this.props.location.state;
+    const { collapse } =  this.state;
 
     return (
       <div className="animated fadeIn">
@@ -37,7 +38,7 @@ class User extends Component {
               <CardHeader>
                 <strong>Card actions</strong>
               </CardHeader>
-              <Collapse isOpen={this.state.collapse} id="collapseExample">
+              <Collapse isOpen={collapse} id="collapseExample">
                 <CardBody>
 
                   <Form action="" method="post" encType="multipart/form-data" className="form-horizontal">

@@ -1,3 +1,2 @@
-import APIManager from './APIManager';
-
-export default APIManager;
+import {GET,POST} from './APIManager';
+export {GET,POST};
