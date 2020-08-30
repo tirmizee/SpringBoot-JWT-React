@@ -1,4 +1,4 @@
-package com.tirmizee.config.inceptor;
+package com.tirmizee.config.intercepter;
 
 import java.util.Locale;
 

@@ -47,14 +47,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
 	private ObjectMapper objectMapper;
-	
 	private JWTProvider jwtProvider;
-	
 	private JWTService jwtService;
-	
 	private AuthenticationManager authenticationManager;
 	
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTProvider jwtProvider, JWTService jwtService, ObjectMapper objectMapper) {
+	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, 
+			JWTProvider jwtProvider, JWTService jwtService, ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
 		this.jwtProvider = jwtProvider;
 		this.jwtService = jwtService;
@@ -67,7 +65,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		try { 
 		
 			String header = request.getHeader(JWTConstants.HEADER_AUTHORIZATION);
-			if (header == null) { throw new JWTAuthenticationException("Header invalid"); }
+			if (header == null) 
+				throw new JWTAuthenticationException("Header invalid");
 		
 			Credential creds = getCredential(header);
 			UsernamePasswordAuthenticationToken authenticationToken = 
@@ -82,11 +81,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	}
 	
 	private Credential getCredential(String header) {
-		String usernameAndPassword[] = CommonUtils.decodeBase64ToString(header.substring(JWTConstants.BASIC_TYPE.length())).split(":");
-		if (usernameAndPassword.length == 2) {
-			return new Credential(usernameAndPassword[0], usernameAndPassword[1]);
-		}
-		throw new BadCredentialsException("Invalid Username Or Password");
+		String usernamePasswordBase64 = header.substring(JWTConstants.BASIC_TYPE.length());
+		String usernamePassword[] = CommonUtils.decodeBase64ToString(usernamePasswordBase64).split(":");
+		if (usernamePassword.length == 2) {
+			return new Credential(usernamePassword[0], usernamePassword[1]);
+		} else throw new BadCredentialsException("Invalid Username Or Password");
 	}
 
 	@Override

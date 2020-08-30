@@ -65,9 +65,8 @@ public class ServerTimeoutFilter extends OncePerRequestFilter {
 				response.getOutputStream().print(gsonMapper.toJson(serverTimeOut));
 				response.getOutputStream().flush();
 			}
-		} catch (Exception exception) {
-
-		}
+			
+		} catch (Exception exception) {}
 		
 	}
 	

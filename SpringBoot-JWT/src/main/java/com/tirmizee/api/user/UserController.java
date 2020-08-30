@@ -49,6 +49,7 @@ public class UserController {
 			UserDTO userDTO = new UserDTO();
 			userDTO.setUserId(user.getUserId());
 			userDTO.setUsername(user.getUsername());
+			userDTO.setEnabled(user.getEnabled());
 			
 			Profile profile = user.getProfile();
 			userDTO.setEmail(profile.getEmail());

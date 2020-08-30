@@ -1,5 +1,7 @@
 package com.tirmizee.config;
 
+import java.time.Duration;
+
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -36,15 +38,17 @@ public class RedisConfig {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(REDIS_HOSTNAME);
 		configuration.setPassword(RedisPassword.of(REDIS_PASSWORD));
 		configuration.setPort(REDIS_PORT);
-		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().usePooling().build();
-    	JedisConnectionFactory factory = new JedisConnectionFactory(configuration, jedisClientConfiguration);
-        factory.afterPropertiesSet();
-        return factory;
+		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
+				.connectTimeout(Duration.ofSeconds(3))
+				.readTimeout(Duration.ofSeconds(3))
+//				.usePooling().poolConfig(poolConfig)
+				.build();
+        return  new JedisConnectionFactory(configuration, jedisClientConfiguration);
 	}
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
-		final RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 		template.setConnectionFactory(jedisConnectionFactory);
 		template.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
 		return template;

@@ -33,7 +33,7 @@ public abstract class SearchPageSpecification<S extends SearchPageable<?>, T> ex
 	 * OVerride this method. if you want to customize the sort directions.
 	 */
 	protected Sort buildSort(String sort, String sortField) {
-		switch (StringUtils.trimToEmpty(sort)) {
+		switch (sort) {
 			case DEFUALT_DERECTION_ASC  : return Sort.by(Sort.Order.asc(sortField));
 			case DEFUALT_DERECTION_DESC : return Sort.by(Sort.Order.desc(sortField));
 			default : return Sort.by(Sort.Order.asc(sortField));
@@ -43,7 +43,7 @@ public abstract class SearchPageSpecification<S extends SearchPageable<?>, T> ex
 	public Pageable getPageable() {
 		Integer page = getSearch().getPage();
 		Integer size = getSearch().getSize();
-		String sort = getSearch().getSort();
+		String sort = StringUtils.defaultString(getSearch().getSort(), DEFUALT_DERECTION_ASC);
 		String sortField = this.sortProperty(this.getSearch().getSortField());
 		return PageRequest.of(page, size, buildSort(sort, sortField));
 	}

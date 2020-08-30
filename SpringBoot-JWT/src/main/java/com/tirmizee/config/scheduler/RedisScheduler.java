@@ -17,10 +17,9 @@ public class RedisScheduler {
 	@Autowired
 	private JWTService jwtService;
 	
-	@Scheduled(fixedRate = 5000, initialDelay = 1000)
+	@Scheduled(fixedDelay = 5000, initialDelay = 1000)
 	public void processDeleteExpiredKey() {
-		LOGGER.info("Redis process delete expired key");
-
+		
 		Map<String, Long> entries = jwtService.allBlackList();
 		entries.forEach((key, value) -> {
 			

@@ -4,38 +4,39 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.tirmizee.config.filter.JWTAuthorizationFilter;
 import com.tirmizee.exception.JWTExpiredException;
 
 import io.jsonwebtoken.Claims;
 
 @Service
-public class JWTServiceImpl implements JWTService {
+public class JWTServiceImpl implements JWTService, InitializingBean {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 	
 	public static final String BLACKLIST_KEY = "TOKEN_BLACKLIST#";
 	public static final String TRUST_KEY = "TOKEN_TRUST#";
 	
+	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
+	
 	private HashOperations<String, String, String> tokenOperations;
 	private HashOperations<String, String, Long> tokenBlacklistOperations;
 
-	@Autowired
-	public JWTServiceImpl(RedisTemplate<String, Object> redisTemplate) {
-		this.redisTemplate = redisTemplate;
-	}
-	 
-	@PostConstruct
-	private void init() {
+	@Override
+	public void afterPropertiesSet() throws Exception {
 		tokenOperations = redisTemplate.opsForHash();
 		tokenBlacklistOperations = redisTemplate.opsForHash();
 	}
-
+	
 	@Override
 	public void addBlackListToken(String jti, Long exp) {
 		tokenBlacklistOperations.put(BLACKLIST_KEY, jti, exp);
@@ -89,5 +90,6 @@ public class JWTServiceImpl implements JWTService {
 		}	
 		
 	}
+
 	
 }

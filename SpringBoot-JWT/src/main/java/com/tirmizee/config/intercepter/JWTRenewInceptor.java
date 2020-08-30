@@ -1,4 +1,4 @@
-package com.tirmizee.config.inceptor;
+package com.tirmizee.config.intercepter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,8 +29,8 @@ public class JWTRenewInceptor implements HandlerInterceptor {
 		String token = (String) request.getAttribute(JWTConstants.TOKEN_ATTRIBUTE);
 		
 		if (token != null) {
-			String newToken = jwtProvider.refreshToken(token);
-			response.setHeader("Token-Renew", newToken);
+			String renewToken = jwtProvider.refreshToken(token);
+			response.setHeader("Token-Renew", renewToken);
 		}
 		
 		return true;

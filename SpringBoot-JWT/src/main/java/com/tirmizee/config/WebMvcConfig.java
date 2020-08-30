@@ -13,8 +13,8 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import com.tirmizee.component.VarargMessageSource;
 import com.tirmizee.component.VarargMessageSourceImpl;
-import com.tirmizee.config.inceptor.JWTRenewInceptor;
-import com.tirmizee.config.inceptor.LocaleHeaderChangeInterceptor;
+import com.tirmizee.config.intercepter.JWTRenewInceptor;
+import com.tirmizee.config.intercepter.LocaleHeaderChangeInterceptor;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {

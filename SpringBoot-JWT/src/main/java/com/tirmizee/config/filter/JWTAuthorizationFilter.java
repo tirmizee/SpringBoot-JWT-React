@@ -49,6 +49,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		this.jwtProvider = jwtProvider;
 		this.jwtService = jwtService;
 	}
+	
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return super.shouldNotFilter(request);
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -57,25 +62,28 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 		try {
 			 
 			 String header = request.getHeader(JWTConstants.HEADER_AUTHORIZATION);
-			 if (header == null || !header.startsWith(JWTConstants.BEARER_TYPE)) {
+			 boolean hasHeaderBearer = header.startsWith(JWTConstants.BEARER_TYPE);
+			 if (header == null || !hasHeaderBearer) {
 	            chain.doFilter(request, response);
-			 }
+	            return;
+			 } 
 			 
 			 String accessIP = request.getRemoteAddr();
 			 String token = header.replace(JWTConstants.BEARER_TYPE, "");
 			 UserDetailsImpl principal = getPrincipal(token);
 			 
 			 boolean isAccessIpEqualLoginIp = accessIP.equals(principal.getIp());
-			 if (principal != null && isAccessIpEqualLoginIp) {
-				 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+			 if (isAccessIpEqualLoginIp) {
+				 request.setAttribute(JWTConstants.TOKEN_ATTRIBUTE, token);
+				 UsernamePasswordAuthenticationToken authenticationToken = 
+						 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
 				 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			 }
 			 
-			 request.setAttribute(JWTConstants.TOKEN_ATTRIBUTE, token);
 			 chain.doFilter(request, response);
 		     
 		 } catch (Exception exception) {
-			 LOGGER.info(exception.getMessage());
+			 LOGGER.info("JWTAuthorizationFilter {} : {}", exception.getClass().getName(), exception.getMessage());
 			 onUnsuccessfulAuthentication(request, response, exception);
 		 }
 		 
