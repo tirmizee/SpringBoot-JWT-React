@@ -35,7 +35,7 @@ public class SearchUserSpecification extends SearchPageSpecification<SearchPagea
 		UserCriteria userCriteria = searchBody.getSearch(); 
 		List<Predicate> predicates = new LinkedList<>();
 			
-		String username = userCriteria.getUsername();
+		String username = userCriteria.getUsername(); 
 		if (!StringUtils.isBlank(username)) {
 			predicates.add(criteriaBuilder.like(root.get("username"), "%" + username + "%"));
 		}
