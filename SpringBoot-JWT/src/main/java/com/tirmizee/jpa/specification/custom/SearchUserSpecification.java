@@ -32,7 +32,7 @@ public class SearchUserSpecification extends SearchPageSpecification<SearchPagea
 		
 		Join<User, Profile> profile = root.join("profile", JoinType.INNER);
 		
-		UserCriteria userCriteria = searchBody.getSearch();
+		UserCriteria userCriteria = searchBody.getSearch(); 
 		List<Predicate> predicates = new LinkedList<>();
 			
 		String username = userCriteria.getUsername();
