@@ -1,8 +1,8 @@
 # SpringBoot-React-JWT
 
 
-### Technology 
+### Technologies
 
-- #### Spring Boot 2 
+- #### Back-end (Spring Boot 2) 
 
-- #### ReactJS 
+- #### Font-end (ReactJS) 
