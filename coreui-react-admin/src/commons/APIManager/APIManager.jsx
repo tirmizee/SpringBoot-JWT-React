@@ -1,12 +1,16 @@
 import Axios from 'axios';
 import { ACCESS_TOKEN } from '../../constants'
 
-const AxiosInternal = () => {
-  const axiosInstance  = Axios.create({ 
-    baseURL: 'http://localhost:8888/jwt'
-  });
-  axiosInstance.interceptors.response.use(
-    response => successHandler(response)
+let AxiosInternal = () => {
+  let axiosInstance  = Axios.create({ baseURL: 'http://localhost:8888/jwt' });
+  axiosInstance.interceptors.response.use( 
+    response => successHandler(response),
+    error => { 
+      if (401 === error.response.status) {
+        console.log('Token-Expired');
+        window.location = '/login';
+      } else return error;
+    }
   );
   return axiosInstance;
 }

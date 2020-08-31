@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI } from '../../constants'
-import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText } from 'reactstrap';
+import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import usersData from './UsersData';
 import {POST,GET} from '../../commons/APIManager';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import DataTable from 'react-data-table-component';
+
+import './index.css';
 
 const sortIcon = <i className="cui-arrow-top icons font-2xl d-block"></i>;
 const actions = (<div>
@@ -35,6 +37,11 @@ const columns = handleClick => [
     }
   },
   {
+    name: 'First Name',
+    selector: 'firstName',
+    sortable: true,
+  },
+  {
     name: 'Email',
     selector: 'email',
     sortable: true,
@@ -46,15 +53,20 @@ const columns = handleClick => [
     }
   },
   {
-    name: 'First Name',
-    selector: 'firstName',
-    sortable: true,
-  },
-  {
     name: 'Status',
     selector: 'enabled',
     sortable: true,
-    cell: (row) => row.enabled ? (<span className="badge badge-success">Active</span>) : (<span className="badge badge-danger">Inactive</span>)
+    cell: (row) => row.enabled ? (<span className="badge badge-success enabled">Active</span>) : (<span className="badge badge-danger enabled">Inactive</span>)
+  },
+  {
+    name: 'Social',
+    sortable: true,
+    cell: (row) => (<span>
+      <i className="fa fa-facebook-square fa-lg icon-unsuccess"></i>{' '} 
+      <i className="fa fa-github fa-lg"></i>{' '} 
+      <i className="fa fa-google-plus-square fa-lg"></i>{' '} 
+      <i className="fa fa-linkedin-square fa-lg"></i>
+    </span>)
   },
   {
     name: 'Action',
@@ -93,6 +105,7 @@ class Users extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isOpenModal : false,
       collapse: true,
       loading: false,
       data: [],
@@ -109,6 +122,7 @@ class Users extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.toggleFade = this.toggleFade.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this.handleSort = this.handleSort.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClickButton = this.handleClickButton.bind(this);
@@ -126,19 +140,26 @@ class Users extends Component {
     this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
+  toggleModal = (e) => { 
+    this.setState((prevState) => { return { isOpenModal: !prevState.isOpenModal } });
+  }
+
   handleSubmit = (e) => {
-    
-    let { perPage, page, search } = this.state;
 
-    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search || {} }, (response) => {
+    let { perPage, page, search = {}} = this.state;
+    let data = { page: page - 1, size: perPage, search : search };
 
+    POST('/user/all', data).then(response => {
+
+      console.log(JSON.stringify(response.data));
       let users = response.data.content.map((o, i) => {
         return {
           order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
-          firstName: o.firstName
+          firstName: o.firstName,
+          enabled : o.enabled
         };
       });
 
@@ -154,24 +175,34 @@ class Users extends Component {
 
   handleClickButton = (e, target, data) => {
     switch (target) {
-      case 'btnView': break;
-      case 'btnEdit': this.props.history.push({ pathname: `/users/${data.id}`, state: { data: data } }); break;
+
+      case 'btnView': {
+        this.toggleModal();
+        break;
+      }
+
+      case 'btnEdit': {
+        this.props.history.push({ pathname: `/users/${data.id}`, state: { data: data } }); 
+        break;
+      }
+
       case 'btnDelete': break;
     }
   }
 
   handleChangeInput = (e) => {
     this.setState({
-      search: { ...this.state.search, [e.target.name]: e.target.value },
-
+      search: { 
+        ...this.state.search, 
+        [e.target.name]: e.target.value 
+      },
     }, () => console.log(this.state.search));
   }
-
 
   handleSort = (column, sortDirection) => {
 
     let sort = sortDirection == 'asc' ? 'A' : 'D';
-    let { perPage, page, search = {} } = this.state;
+    let { perPage, page, search = {}} = this.state;
     let data = { 
       page: page - 1, 
       size: perPage,
@@ -180,60 +211,56 @@ class Users extends Component {
       search : search 
     }
 
-    POST('http://localhost:8888/jwt/user/all', data, (response) => {
-
-      let users = response.data.content.map((o, i) => {
-        return {
-          order: (page - 1) * perPage + (i + 1),
-          id: o.userId,
-          email: o.email,
-          username: o.username,
-          firstName: o.firstName
-        };
-      });
-
-      this.setState({
-        loading: false,
-        data: users,
-        perPage : perPage, 
-        totalRows : response.totalElements
-      });
+    POST('/user/all', data)
+      .then(response => {
+        let users = response.data.content.map((o, i) => {
+          return {
+            order: (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstName: o.firstName,
+            enabled : o.enabled
+          };
+        });
+        this.setState({
+          loading: false,
+          data: users,
+          perPage : perPage, 
+          totalRows : response.totalElements
+        });
     });
-
   };
 
   handlePageChange = async page => {
 
     const { perPage, search = {} } = this.state;
+    let data = { page: page - 1, size: perPage, search : search };
 
-    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : search }, (response) => {
-
+    POST('/user/all', data).then(response => {
       let users = response.data.content.map((o, i) => {
         return {
           order: (page - 1) * perPage + (i + 1),
           id: o.userId,
           email: o.email,
           username: o.username,
-          firstName: o.firstName
+          firstName: o.firstName,
+          enabled : o.enabled
         };
       });
-
       this.setState({
         loading: false,
         data: users,
         perPage : perPage, 
         totalRows : response.totalElements
       });
-
     });
 
   }
 
   handlePerRowsChange = async (perPage, page) => {
 
-    console.log('handlePerRowsChange : ' + page);
-
-    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search : {}}, (response) => {
+    POST('/user/all', { page: page - 1, size: perPage, search : {}}).then(response => {
 
       let users = response.data.content.map((o, i) => {
         return {
@@ -241,7 +268,8 @@ class Users extends Component {
           id: o.userId,
           email: o.email,
           username: o.username,
-          firstName: o.firstName
+          firstName: o.firstName,
+          enabled : o.enabled
         };
       });
 
@@ -259,6 +287,7 @@ class Users extends Component {
     const { page, perPage, search = {}} = this.state;
    
     POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search:search }).then(response => {
+
       let users = response.data.content.map((o, i) => {
         return {
           order: (page - 1) * perPage + (i + 1),
@@ -275,16 +304,33 @@ class Users extends Component {
         totalRows: response.data.totalElements,
         loading: false
       });
+      
     });
 
   }
 
   render() {
 
-    const { collapse, loading, data, totalRows, search } = this.state;
+    const { collapse, loading, data, totalRows, search, isOpenModal } = this.state;
 
     return (
       <div className="animated fadeIn">
+
+        <Modal isOpen={isOpenModal} toggle={this.toggleModal} className={this.props.className}>
+          <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader>
+          <ModalBody>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
+            et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this.toggleModal}>Do Something</Button>{' '}
+            <Button color="secondary" onClick={this.toggleModal}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
+
         <Row>
           <Col lg={12}>
             <Card>

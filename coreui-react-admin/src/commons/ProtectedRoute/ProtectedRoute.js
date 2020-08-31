@@ -10,8 +10,8 @@ export const ProtectedRoute = ({
     <Route {...rest}
       render={ props => 
         AuthenManager.isAuthenticated() 
-        ? <Component {...props} />
-        : (<Redirect to={{ pathname: "/login", state: {from: props.location }}} /> )
+          ? <Component {...props} />
+          : <Redirect to={{ pathname: "/login", state: {from: props.location }}} />
       }
     />
   );

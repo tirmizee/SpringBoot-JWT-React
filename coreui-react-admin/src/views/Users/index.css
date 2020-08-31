@@ -1,0 +1,13 @@
+.badge.badge-success.enabled{
+    padding:5px;
+    border-radius:8px;
+}
+
+.badge.badge-danger.enabled{
+    padding:5px;
+    border-radius:8px;
+}
+
+.icon-unsuccess {
+    color: #cccccc;
+}

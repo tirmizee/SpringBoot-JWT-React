@@ -160,11 +160,13 @@ export default {
       name: 'Icons',
       url: '/icons',
       icon: 'icon-star',
+      authority: "P001",
       children: [
         {
           name: 'CoreUI Icons',
           url: '/icons/coreui-icons',
           icon: 'icon-star',
+          authority: "P001",
           badge: {
             variant: 'info',
             text: 'NEW',
@@ -174,11 +176,13 @@ export default {
           name: 'Flags',
           url: '/icons/flags',
           icon: 'icon-star',
+          authority: "P001",
         },
         {
           name: 'Font Awesome',
           url: '/icons/font-awesome',
           icon: 'icon-star',
+          authority: "P001",
           badge: {
             variant: 'secondary',
             text: '4.7',
@@ -188,6 +192,7 @@ export default {
           name: 'Simple Line Icons',
           url: '/icons/simple-line-icons',
           icon: 'icon-star',
+          authority: "P001"
         },
       ],
     },
@@ -195,6 +200,7 @@ export default {
       name: 'Notifications',
       url: '/notifications',
       icon: 'icon-bell',
+      authority : "P001",
       children: [
         {
           name: 'Alerts',
@@ -210,6 +216,7 @@ export default {
           name: 'Modals',
           url: '/notifications/modals',
           icon: 'icon-bell',
+          authority : "P001"
         },
       ],
     },
