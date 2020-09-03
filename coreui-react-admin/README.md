@@ -1,12 +1,7 @@
-# SpringBoot-React-JWT
+# Font-end(Core-UI-Admin)
 
+### Dependencies 
 
-### Technologies
+- https://github.com/STRML/react-grid-layout
 
-- #### Back-end (Spring Boot 2) 
-
-- #### Font-end (ReactJS) 
-
-### Reference 
-
-- https://coreui.io/docs/2.1/getting-started/introduction/
+- https://github.com/jbetancur/react-data-table-component
