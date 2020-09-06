@@ -1,6 +1,18 @@
 import React, { PureComponent } from 'react';
+import Item from './Item/Item.js'
 import PropTypes from 'prop-types';
 //import { Test } from './Products.styles';
+
+const products = [
+  {id : 1, name : 'Fan1'},
+  {id : 2, name : 'Fan2'},
+  {id : 3, name : 'Fan3'},
+  {id : 4, name : 'Fan4'},
+  {id : 5, name : 'Fan5'},
+  {id : 6, name : 'Fan6'},
+  {id : 7, name : 'Fan7'},
+  {id : 8, name : 'Fan8'}
+];
 
 class Products extends PureComponent { 
   constructor(props) {
@@ -8,6 +20,7 @@ class Products extends PureComponent {
 
     this.state = {
       hasError: false,
+      products : products
     };
   }
 
@@ -39,9 +52,12 @@ class Products extends PureComponent {
     if (this.state.hasError) {
       return <h1>Something went wrong.</h1>;
     }
+
+    const {products} = this.state;
+
     return (
       <div className="ProductsWrapper">
-        Test content
+        <Item items={products}/>
       </div>
     );
   }

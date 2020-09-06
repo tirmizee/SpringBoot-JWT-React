@@ -18,7 +18,7 @@ const actions = (<div>
   <i className="fa fa-plus fa-md"></i>&nbsp;
   <i className="fa fa-wrench fa-md"></i>
 </div>);
-const columns = handleClick => [
+const columns = ( handleClick, handleClickButton) => [
   {
     name: 'Order',
     selector: 'order',
@@ -316,7 +316,13 @@ class Users extends Component {
     return (
       <div className="animated fadeIn">
 
-        <Modal isOpen={isOpenModal} toggle={this.toggleModal} className={this.props.className}>
+        <Modal 
+          isOpen={isOpenModal} 
+          toggle={this.toggleModal} 
+          className={this.props.className}
+          modalTransition={{ timeout: 50 }}
+          backdropTransition={{ timeout: 50 }}
+        >
           <ModalHeader toggle={this.toggleModal}>Modal title</ModalHeader>
           <ModalBody>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore
@@ -425,7 +431,7 @@ class Users extends Component {
                   <Col md="12">
                     <DataTable
                       data={data}
-                      columns={columns(this.handleClickButton)}
+                      columns={columns(this.handleClickButton, this.handleClickButton)}
                       progressPending={loading}
                       actions={actions}
                       sortIcon={sortIcon}

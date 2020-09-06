@@ -83,4 +83,12 @@ class DefaultHeader extends Component {
 DefaultHeader.propTypes = propTypes;
 DefaultHeader.defaultProps = defaultProps;
 
+const mapStateToProps = state => {
+  return {}
+};
+
+const mapDispatchToProps = dispatch => {
+  return {}
+};
+
 export default DefaultHeader;
