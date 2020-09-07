@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import { ACCESS_TOKEN, API_LOGIN_URI, API_LOGOUT_URI } from '../../constants'
 import { Badge, Card, CardBody, CardHeader, Col, Collapse, FormGroup, Input, Row, Label, CardFooter, Button, InputGroup, InputGroupAddon, InputGroupText, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import usersData from './UsersData';
 import {POST,GET} from '../../commons/APIManager';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -151,24 +150,27 @@ class Users extends Component {
 
     POST('/user/all', data).then(response => {
 
-      console.log(JSON.stringify(response.data));
-      let users = response.data.content.map((o, i) => {
-        return {
-          order: (page - 1) * perPage + (i + 1),
-          id: o.userId,
-          email: o.email,
-          username: o.username,
-          firstName: o.firstName,
-          enabled : o.enabled
-        };
-      });
+      if(response.status === 200) {
+        console.log(JSON.stringify(response.data));
+        let users = response.data.content.map((o, i) => {
+          return {
+            order: (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstName: o.firstName,
+            enabled : o.enabled
+          };
+        });
+  
+        this.setState({
+          loading: false,
+          data: users,
+          perPage : perPage, 
+          totalRows : response.totalElements
+        });
+      }
 
-      this.setState({
-        loading: false,
-        data: users,
-        perPage : perPage, 
-        totalRows : response.totalElements
-      });
     });
 
   }
@@ -211,8 +213,9 @@ class Users extends Component {
       search : search 
     }
 
-    POST('/user/all', data)
-      .then(response => {
+    POST('/user/all', data).then(response => {
+      
+      if(response.status === 200) {
         let users = response.data.content.map((o, i) => {
           return {
             order: (page - 1) * perPage + (i + 1),
@@ -229,6 +232,8 @@ class Users extends Component {
           perPage : perPage, 
           totalRows : response.totalElements
         });
+      }
+        
     });
   };
 
@@ -238,22 +243,25 @@ class Users extends Component {
     let data = { page: page - 1, size: perPage, search : search };
 
     POST('/user/all', data).then(response => {
-      let users = response.data.content.map((o, i) => {
-        return {
-          order: (page - 1) * perPage + (i + 1),
-          id: o.userId,
-          email: o.email,
-          username: o.username,
-          firstName: o.firstName,
-          enabled : o.enabled
-        };
-      });
-      this.setState({
-        loading: false,
-        data: users,
-        perPage : perPage, 
-        totalRows : response.totalElements
-      });
+
+      if(response.status === 200){
+        let users = response.data.content.map((o, i) => {
+          return {
+            order: (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstName: o.firstName,
+            enabled : o.enabled
+          };
+        });
+        this.setState({
+          loading: false,
+          data: users,
+          perPage : perPage, 
+          totalRows : response.totalElements
+        });
+      }
     });
 
   }
@@ -262,24 +270,26 @@ class Users extends Component {
 
     POST('/user/all', { page: page - 1, size: perPage, search : {}}).then(response => {
 
-      let users = response.data.content.map((o, i) => {
-        return {
-          order: (page - 1) * perPage + (i + 1),
-          id: o.userId,
-          email: o.email,
-          username: o.username,
-          firstName: o.firstName,
-          enabled : o.enabled
-        };
-      });
-
-      this.setState({
-        loading: false,
-        data: users,
-        perPage,
-      });
-
+      if(response.status === 200){
+        let users = response.data.content.map((o, i) => {
+          return {
+            order: (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstName: o.firstName,
+            enabled : o.enabled
+          };
+        });
+  
+        this.setState({
+          loading: false,
+          data: users,
+          perPage,
+        });
+      }
     });
+
   }
 
   componentDidMount = () => {
@@ -288,23 +298,25 @@ class Users extends Component {
    
     POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search:search }).then(response => {
 
-      let users = response.data.content.map((o, i) => {
-        return {
-          order: (page - 1) * perPage + (i + 1),
-          id: o.userId,
-          email: o.email,
-          username: o.username,
-          firstName: o.firstName,
-          enabled : o.enabled
-        };
-      });
+      if(response.status === 200){
+        let users = response.data.content.map((o, i) => {
+          return {
+            order: (page - 1) * perPage + (i + 1),
+            id: o.userId,
+            email: o.email,
+            username: o.username,
+            firstName: o.firstName,
+            enabled : o.enabled
+          };
+        });
+  
+        this.setState({
+          data: users,
+          totalRows: response.data.totalElements,
+          loading: false
+        });
+      }
 
-      this.setState({
-        data: users,
-        totalRows: response.data.totalElements,
-        loading: false
-      });
-      
     });
 
   }

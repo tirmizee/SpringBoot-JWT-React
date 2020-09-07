@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import * as router from 'react-router-dom';
 import { Container } from 'reactstrap';
 import AuthenManager from '../../commons/AuthenManager';
+import ModalRefreshToken from '../../components/ModalRefreshToken/ModalRefreshToken';
 
 import {
   AppAside,
@@ -44,6 +45,9 @@ class DefaultLayout extends Component {
     let navAuthority = { items : navigation.items.filter(e => authorities.includes(e.authority))};
     return (
       <div className="app">
+        
+        <ModalRefreshToken/>
+
         <AppHeader fixed>
           <Suspense  fallback={this.loading()}>
             <DefaultHeader onLogout={e=>this.signOut(e)}/>

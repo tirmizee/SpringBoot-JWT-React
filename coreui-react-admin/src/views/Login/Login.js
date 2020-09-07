@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import AuthenManager from '../../commons/AuthenManager';
 import ApiManager from '../../commons/APIManager';
-import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { Alert, Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, FormFeedback, FormGroup } from 'reactstrap';
 
 class Login extends Component {
 
@@ -10,16 +10,33 @@ class Login extends Component {
     super(props);
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      error: {
+        isError : false,
+        errorMessage : ''
+      }
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmitForm = this.onSubmitForm.bind(this);
+    this.validate = this.validate.bind(this); 
+  }
+
+  setSateError(error, callback){
+    return this.setState({
+      ...this.state,
+      error : error
+    }, callback);
   }
 
   onChange(e){
     this.setState({
       [e.target.name] : e.target.value
     }) 
+  }
+
+  validate(){
+    let isValid = true;
+    return isValid;
   }
 
   onSubmitForm(e){
@@ -33,12 +50,25 @@ class Login extends Component {
       if (response.status == 200 && response.data.status){
         AuthenManager.setAuthenticated(response.data.data.token);
         this.props.history.push('/'); 
+      } else {
+        const error = {
+          isError : true,
+          errorMessage : '[ER001] : username or password invalid!'
+        }
+
+        this.setSateError(error, () => { 
+          setTimeout(() => {
+            this.setSateError({isError : false})
+          },7000);
+        });
+       
       }
     });
 
   }
 
   render() {
+    const {error} = this.state;
     return (
       <div className="app flex-row align-items-center">
         <Container>
@@ -49,14 +79,20 @@ class Login extends Component {
                   <CardBody>
                     <Form onSubmit={this.onSubmitForm}>
                       <h1>Login</h1>
-                      <p className="text-muted">Sign In to your account</p>
+                      <p className="text-muted"><small>Sign In to your account</small></p>
+                      
+                      {error.isError && 
+                        <Alert color="danger">
+                          {error.errorMessage}
+                        </Alert>
+                      }
                       <InputGroup className="mb-3">
                         <InputGroupAddon addonType="prepend">
                           <InputGroupText>
                             <i className="icon-user"></i>
                           </InputGroupText>
                         </InputGroupAddon>
-                        <Input type="text" name="username" value={this.state.username} onChange={this.onChange} placeholder="Username" autoComplete="username" />
+                        <Input type="text" name="username"  value={this.state.username} onChange={this.onChange} placeholder="Username" autoComplete="username" />
                       </InputGroup>
                       <InputGroup className="mb-4">
                         <InputGroupAddon addonType="prepend">

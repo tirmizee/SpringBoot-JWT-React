@@ -5,17 +5,10 @@ import './polyfill' // import 'react-app-polyfill/ie11'; // For IE 11 support
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import reducer from './store/reducer'
-
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-const rootReducer = combineReducers({
-    ctr: reducer,
-});
-
-const store = createStore(rootReducer);
+import store from './store';
 
 ReactDOM.render(
     <Provider store={store}>

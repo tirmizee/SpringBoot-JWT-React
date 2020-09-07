@@ -4,10 +4,10 @@ import './Item.scss'
 
 const Item = ({items}) => {
     
-    const getElementOfItem = (item) => {
+    const getElementOfItem = (item, index) => {
         return (
-            <Col xs="6" sm="4">
-                <Card>
+            <Col xs="6" sm="4" key={index}>
+                <Card key={index}>
                     <CardImg top width="100%" src="https://i.ytimg.com/vi/7SSu0KtXI2c/maxresdefault.jpg" />
                     <CardBody>
                         <CardTitle>Card title</CardTitle>
@@ -21,7 +21,7 @@ const Item = ({items}) => {
 
     return (
         <Container>
-            { items.map( (item, index) => { return getElementOfItem(item); }) }
+            { items.map( (item, index) => { return getElementOfItem(item, index); }) }
         </Container>
     );
 }

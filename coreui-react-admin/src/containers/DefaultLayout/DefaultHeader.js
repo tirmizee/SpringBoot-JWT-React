@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import { Badge, UncontrolledDropdown, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
 import PropTypes from 'prop-types';
@@ -91,4 +92,4 @@ const mapDispatchToProps = dispatch => {
   return {}
 };
 
-export default DefaultHeader;
+export default connect(mapStateToProps, mapDispatchToProps)(DefaultHeader);

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter,HashRouter, Route, Switch } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import './App.scss';
-import ProtectedRoute from './commons/ProtectedRoute'
+import ProtectedRoute from './components/ProtectedRoute'
 import Axios from 'axios';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;

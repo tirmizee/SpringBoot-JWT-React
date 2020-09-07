@@ -41,6 +41,7 @@ export default {
       name: 'Base',
       url: '/base',
       icon: 'icon-puzzle',
+      authority : "P001",
       children: [
         {
           name: 'Breadcrumbs',
@@ -71,6 +72,7 @@ export default {
           name: 'Forms',
           url: '/base/forms',
           icon: 'icon-puzzle',
+          authority : "P001",
         },
         {
           name: 'Jumbotrons',

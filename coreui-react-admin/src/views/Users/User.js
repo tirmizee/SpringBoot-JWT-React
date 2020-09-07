@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Row, Input, Collapse, Form, FormGroup, Label, Button } from 'reactstrap';
 
-import usersData from './UsersData'
-
 class User extends Component {
 
   constructor(props) {
