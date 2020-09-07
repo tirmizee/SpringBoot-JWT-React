@@ -58,29 +58,30 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		LOGGER.info("Init JWTAuthorizationFilter ");
+		LOGGER.info("JWTAuthorizationFilter Process");
 		try {
 			 
 			 String header = request.getHeader(JWTConstants.HEADER_AUTHORIZATION);
-			 boolean hasHeaderBearer = header.startsWith(JWTConstants.BEARER_TYPE);
-			 if (header == null || !hasHeaderBearer) {
-	            chain.doFilter(request, response);
-	            return;
-			 } 
-			 
-			 String accessIP = request.getRemoteAddr();
-			 String token = header.replace(JWTConstants.BEARER_TYPE, "");
-			 UserDetailsImpl principal = getPrincipal(token);
-			 
-			 boolean isAccessIpEqualLoginIp = accessIP.equals(principal.getIp());
-			 if (isAccessIpEqualLoginIp) {
-				 request.setAttribute(JWTConstants.TOKEN_ATTRIBUTE, token);
-				 UsernamePasswordAuthenticationToken authenticationToken = 
-						 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
-				 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			 if (header == null || !header.startsWith(JWTConstants.BEARER_TYPE)) {
+	            
+				 chain.doFilter(request, response);
+	            
+			 } else {
+				 
+				 String accessIP = request.getRemoteAddr();
+				 String token = header.replace(JWTConstants.BEARER_TYPE, "");
+				 UserDetailsImpl principal = getPrincipal(token);
+				 
+				 boolean isAccessIpEqualLoginIp = accessIP.equals(principal.getIp());
+				 if (isAccessIpEqualLoginIp) {
+					 request.setAttribute(JWTConstants.TOKEN_ATTRIBUTE, token);
+					 UsernamePasswordAuthenticationToken authenticationToken = 
+							 new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+					 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				 }
+				 
+				 chain.doFilter(request, response);
 			 }
-			 
-			 chain.doFilter(request, response);
 		     
 		 } catch (Exception exception) {
 			 LOGGER.info("JWTAuthorizationFilter {} : {}", exception.getClass().getName(), exception.getMessage());
@@ -92,7 +93,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 	private UserDetailsImpl getPrincipal(String token) {
 		
 		Claims claims = jwtProvider.getClaim(token);
-		
 		if (claims != null) {
     		
 			jwtService.validateToken(claims);

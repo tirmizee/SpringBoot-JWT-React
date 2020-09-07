@@ -62,6 +62,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
+		LOGGER.info("JWTAuthenticationFilter Process");
 		try { 
 		
 			String header = request.getHeader(JWTConstants.HEADER_AUTHORIZATION);

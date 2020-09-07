@@ -27,7 +27,7 @@ public class RedisConfig {
 	
 	public GenericObjectPoolConfig poolConfig() {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-		poolConfig.setMaxTotal(20);
+		poolConfig.setMaxTotal(10);
 		poolConfig.setMinIdle(5);
 		poolConfig.setMaxIdle(10);
 		return poolConfig;
@@ -38,11 +38,13 @@ public class RedisConfig {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(REDIS_HOSTNAME);
 		configuration.setPassword(RedisPassword.of(REDIS_PASSWORD));
 		configuration.setPort(REDIS_PORT);
+		
 		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
-				.connectTimeout(Duration.ofSeconds(3))
-				.readTimeout(Duration.ofSeconds(3))
-//				.usePooling().poolConfig(poolConfig)
-				.build();
+			.connectTimeout(Duration.ofSeconds(3))
+			.readTimeout(Duration.ofSeconds(3))
+			.usePooling() //.poolConfig(poolConfig())
+			.build();
+		
         return  new JedisConnectionFactory(configuration, jedisClientConfiguration);
 	}
 

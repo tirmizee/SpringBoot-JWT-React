@@ -16,6 +16,7 @@ import com.tirmizee.config.security.CurrentUser;
 import com.tirmizee.jpa.entities.Profile;
 import com.tirmizee.jpa.entities.User;
 import com.tirmizee.jpa.repositories.UserRepository;
+import com.tirmizee.jpa.specification.SearchCriteria;
 import com.tirmizee.jpa.specification.SearchPageable;
 import com.tirmizee.jpa.specification.custom.SearchUserSpecification;
 import com.tirmizee.mapper.UserMapper;
@@ -40,7 +41,7 @@ public class UserController {
 	}
 	
 	@PostMapping(path = "/all")
-	public Page<UserDTO> findAll(@RequestBody SearchPageable<UserCriteria> search) {
+	public Page<UserDTO> findAll(@RequestBody SearchCriteria<UserCriteria> search) {
 		System.out.println(search.getSearch());
 		SearchUserSpecification specification = new SearchUserSpecification(search);
 		Page<User> page = userRepository.findAll(specification, specification.getPageable());

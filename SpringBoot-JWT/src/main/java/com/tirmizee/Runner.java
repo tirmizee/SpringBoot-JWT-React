@@ -21,6 +21,10 @@ public class Runner implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
+//		cr01();
+	}
+	
+	public void cr01() {
 		CategoryRepository categoryRepository = context.getBean(CategoryRepository.class);
 		ProductRepository productRepository = context.getBean(ProductRepository.class);
 		

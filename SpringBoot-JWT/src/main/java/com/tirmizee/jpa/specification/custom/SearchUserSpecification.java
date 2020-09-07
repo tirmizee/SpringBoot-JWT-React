@@ -15,37 +15,39 @@ import org.apache.commons.lang3.StringUtils;
 import com.tirmizee.api.user.data.UserCriteria;
 import com.tirmizee.jpa.entities.Profile;
 import com.tirmizee.jpa.entities.User;
+import com.tirmizee.jpa.specification.SearchCriteria;
 import com.tirmizee.jpa.specification.SearchPageSpecification;
-import com.tirmizee.jpa.specification.SearchPageable;
 
-public class SearchUserSpecification extends SearchPageSpecification<SearchPageable<UserCriteria>, User> {
+public class SearchUserSpecification extends SearchPageSpecification<SearchCriteria<UserCriteria>, User> {
 
 	private static final long serialVersionUID = 1L;
 
-	public SearchUserSpecification(SearchPageable<UserCriteria> serachBody) {
+	public SearchUserSpecification(SearchCriteria<UserCriteria> serachBody) {
 		super(serachBody);
 	}
 
 	@Override
 	public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
-			SearchPageable<UserCriteria> searchBody) {
+			SearchCriteria<UserCriteria> searchCriteria) {
 		
 		Join<User, Profile> profile = root.join("profile", JoinType.INNER);
 		
-		UserCriteria userCriteria = searchBody.getSearch(); 
+		UserCriteria userCriteria = searchCriteria.getSearch(); 
 		List<Predicate> predicates = new LinkedList<>();
 			
 		String username = userCriteria.getUsername(); 
 		if (!StringUtils.isBlank(username)) {
-			predicates.add(criteriaBuilder.like(root.get("username"), "%" + username + "%"));
+			Predicate likeUsername = criteriaBuilder.like(root.get("username"), "%" + username + "%");
+			predicates.add(likeUsername);
 		}
 		
 		String firstName = userCriteria.getFirstName();
 		if (!StringUtils.isBlank(firstName)) {
-			predicates.add(criteriaBuilder.like(profile.get("firstName"), "%" + firstName + "%"));
+			Predicate likeFirstname = criteriaBuilder.like(profile.get("firstName"), "%" + firstName + "%");
+			predicates.add(likeFirstname);
 		}
 		
-		return super.buildPredicate(predicates, criteriaBuilder);
+		return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
 	}
 	
 	@Override

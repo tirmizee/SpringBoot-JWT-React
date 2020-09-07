@@ -31,7 +31,7 @@ public class RequestLoggingFilter extends AbstractRequestLoggingFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		logger.info("Process RequestLoggingFilter");
+		logger.info("RequestLoggingFilter Process");
 		MDC.put("accessIp", request.getRemoteAddr());
 		MDC.put("logId", UUID.randomUUID().toString());
 		super.doFilterInternal(request, response, filterChain);

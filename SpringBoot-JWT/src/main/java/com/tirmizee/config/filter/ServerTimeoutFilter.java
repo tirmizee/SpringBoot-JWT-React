@@ -43,7 +43,7 @@ public class ServerTimeoutFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		logger.info("ServerTimeoutFilter");
+		logger.info("ServerTimeoutFilter Process");
 
 		try {
 			

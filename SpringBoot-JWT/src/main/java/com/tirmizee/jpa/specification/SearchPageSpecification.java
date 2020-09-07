@@ -11,7 +11,7 @@ import org.springframework.data.domain.Sort;
  * @param <B> Object type of SearchPageable
  * @param <T> Domain object
  */
-public abstract class SearchPageSpecification<S extends SearchPageable<?>, T> extends SearchSpecification<S,T> {
+public abstract class SearchPageSpecification<S extends SearchPageable, T> extends SearchSpecification<S,T> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -40,6 +40,9 @@ public abstract class SearchPageSpecification<S extends SearchPageable<?>, T> ex
 		}
 	}
 	
+	/**
+	 * OVerride this method. if you want to customize Pageable.
+	 */
 	public Pageable getPageable() {
 		Integer page = getSearch().getPage();
 		Integer size = getSearch().getSize();

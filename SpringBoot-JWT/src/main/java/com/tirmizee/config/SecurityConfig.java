@@ -30,7 +30,7 @@ import com.tirmizee.config.filter.JWTAuthorizationFilter;
 import com.tirmizee.config.filter.JWTHeaderFilter;
 import com.tirmizee.config.filter.RequestLoggingFilter;
 import com.tirmizee.config.filter.ServerTimeoutFilter;
-import com.tirmizee.config.security.AuthenticationEntryPointImpl;
+import com.tirmizee.config.security.JWTAuthenticationEntryPoint;
 import com.tirmizee.config.security.UserDetailsAuthenticationProvider;
 import com.tirmizee.service.JWTService;
 
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private RequestLoggingFilter requestLoggingFilter;
 
 	@Autowired
-	private AuthenticationEntryPointImpl authenticationEntryPointImpl;
+	private JWTAuthenticationEntryPoint authenticationEntryPointImpl;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {

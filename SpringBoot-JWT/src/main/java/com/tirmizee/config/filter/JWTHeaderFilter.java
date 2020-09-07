@@ -20,7 +20,7 @@ public class JWTHeaderFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		logger.info("Init JWTHeaderFilter");
+		logger.info("JWTHeaderFilter Process");
 		filterChain.doFilter(request, response);
 	}
 

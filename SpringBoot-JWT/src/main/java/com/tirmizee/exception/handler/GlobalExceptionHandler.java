@@ -1,5 +1,7 @@
 package com.tirmizee.exception.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Controller;
@@ -13,8 +15,11 @@ import com.tirmizee.common.response.ResponseData;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+	public static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	
 	@ExceptionHandler(value = RequestRejectedException.class)
 	ResponseEntity<?> handleException(RequestRejectedException exception){
+		logger.debug("GlobalExceptionHandler RequestRejectedException : {}", exception.getMessage());
 		ResponseData<Void> responseData = new ResponseData<Void>();
 		responseData.setStatus(false);
 		responseData.setMessageDesc(exception.getMessage());

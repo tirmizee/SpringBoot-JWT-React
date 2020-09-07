@@ -8,12 +8,12 @@ import lombok.Data;
  *
  */
 @Data
-public class SearchPageable<B> {
+public class SearchPageable {
 	 	
 	 private Integer page = 0;
 	 private Integer size = 10;
 	 private String sort;
 	 private String sortField;
-	 private B search;
+	 
 
 }
