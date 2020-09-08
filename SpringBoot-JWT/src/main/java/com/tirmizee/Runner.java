@@ -1,7 +1,9 @@
 package com.tirmizee;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -37,7 +39,11 @@ public class Runner implements CommandLineRunner {
 		product.setPrice(BigDecimal.valueOf(1200));
 		product.setCreateDate(new Date());
 		product.setCategory(category);
-//		productRepository.save(product);
+		
+		System.out.println("Default Locale:   " + Locale.getDefault());
+		System.out.println("Default Charset:  " + Charset.defaultCharset());
+		System.out.println("file.encoding;    " + System.getProperty("file.encoding"));
+		System.out.println("sun.jnu.encoding: " + System.getProperty("sun.jnu.encoding"));
 	}
 
 }

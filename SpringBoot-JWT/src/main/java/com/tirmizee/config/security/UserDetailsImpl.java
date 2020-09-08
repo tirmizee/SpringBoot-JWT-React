@@ -6,15 +6,16 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Pratya Yeekhaday
  *
  */
 
-@Data
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
 	private static final long serialVersionUID = 1L;

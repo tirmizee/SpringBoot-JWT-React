@@ -20,7 +20,7 @@ public class JWTRenewInceptor implements HandlerInterceptor {
 	
 	@Autowired
 	private JWTProvider jwtProvider;
-	
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
@@ -32,7 +32,7 @@ public class JWTRenewInceptor implements HandlerInterceptor {
 			String renewToken = jwtProvider.refreshToken(token);
 			response.setHeader("Token-Renew", renewToken);
 		}
-		
+
 		return true;
 	}
 
