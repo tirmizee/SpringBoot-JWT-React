@@ -1,11 +1,11 @@
 # SpringBoot-React-JWT
 
 
-### Technologies
+## Technologies
 
-- #### Back-end (Spring Boot 2) 
-
-- #### Font-end (ReactJS) 
+- ### Back-end (Spring Boot 2) 
+  - #### Authentication With JSON Web Tokens (JWT)
+- ### Font-end (ReactJS) 
 
 ### Reference 
 
