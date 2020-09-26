@@ -7,6 +7,7 @@ import {POST,GET} from '../../commons/APIManager';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import DataTable from 'react-data-table-component';
+import {Segment, Loader } from 'semantic-ui-react'
 
 import './index.css';
 
@@ -111,6 +112,7 @@ class Users extends Component {
       totalRows: 0,
       page: 1,
       perPage: 10,
+      loadingApi : false,
       search: {
         username: '',
         firstName: '',
@@ -152,6 +154,7 @@ class Users extends Component {
 
       if(response.status === 200) {
         console.log(JSON.stringify(response.data));
+        
         let users = response.data.content.map((o, i) => {
           return {
             order: (page - 1) * perPage + (i + 1),
@@ -163,12 +166,14 @@ class Users extends Component {
           };
         });
   
-        this.setState({
+        const state = {
           loading: false,
           data: users,
           perPage : perPage, 
           totalRows : response.totalElements
-        });
+        }
+
+        this.setState(state);
       }
 
     });
@@ -258,8 +263,7 @@ class Users extends Component {
         this.setState({
           loading: false,
           data: users,
-          perPage : perPage, 
-          totalRows : response.totalElements
+          // totalRows : response.totalElements
         });
       }
     });
@@ -294,36 +298,40 @@ class Users extends Component {
 
   componentDidMount = () => {
 
-    const { page, perPage, search = {}} = this.state;
-   
-    POST('http://localhost:8888/jwt/user/all', { page: page - 1, size: perPage, search:search }).then(response => {
-
-      if(response.status === 200){
-        let users = response.data.content.map((o, i) => {
-          return {
-            order: (page - 1) * perPage + (i + 1),
-            id: o.userId,
-            email: o.email,
-            username: o.username,
-            firstName: o.firstName,
-            enabled : o.enabled
-          };
-        });
+    const callback = () => { 
+      const { page, perPage, search = {}} = this.state;
+      const data = { page: page - 1, size: perPage, search:search };
+      POST('http://localhost:8888/jwt/user/all', data).then(response => {
   
-        this.setState({
-          data: users,
-          totalRows: response.data.totalElements,
-          loading: false
-        });
-      }
+        if(response.status === 200){
+          let users = response.data.content.map((o, i) => {
+            return {
+              order: (page - 1) * perPage + (i + 1),
+              id: o.userId,
+              email: o.email,
+              username: o.username,
+              firstName: o.firstName,
+              enabled : o.enabled
+            };
+          });
+    
+          this.setState({
+            data: users,
+            totalRows: response.data.totalElements,
+            loading: false,
+            loadingApi: false
+          });
+        }
+      });
+    }
 
-    });
+    this.setState({loadingApi: true}, callback);
 
   }
 
   render() {
 
-    const { collapse, loading, data, totalRows, search, isOpenModal } = this.state;
+    const { collapse, loading, data, totalRows, search, isOpenModal,loadingApi } = this.state;
 
     return (
       <div className="animated fadeIn">
@@ -441,22 +449,24 @@ class Users extends Component {
               <CardBody>
                 <Row>
                   <Col md="12">
-                    <DataTable
-                      data={data}
-                      columns={columns(this.handleClickButton, this.handleClickButton)}
-                      progressPending={loading}
-                      actions={actions}
-                      sortIcon={sortIcon}
-                      onSort={this.handleSort}
-                      customStyles={styles}
-                      paginationTotalRows={totalRows}
-                      onChangeRowsPerPage={this.handlePerRowsChange}
-                      onChangePage={this.handlePageChange}
-                      pagination
-                      paginationServer
-                      highlightOnHover
-                      pointerOnHover
-                    />
+                      <Segment basic loading={loadingApi}>
+                        <DataTable
+                          data={data}
+                          columns={columns(this.handleClickButton, this.handleClickButton)}
+                          progressPending={loading}
+                          actions={actions}
+                          sortIcon={sortIcon}
+                          onSort={this.handleSort}
+                          customStyles={styles}
+                          onChangeRowsPerPage={this.handlePerRowsChange}
+                          onChangePage={this.handlePageChange}
+                          pagination
+                          paginationServer
+                          paginationTotalRows={totalRows}
+                          highlightOnHover
+                          pointerOnHover
+                        />
+                      </Segment>
                   </Col>
                 </Row>
               </CardBody>

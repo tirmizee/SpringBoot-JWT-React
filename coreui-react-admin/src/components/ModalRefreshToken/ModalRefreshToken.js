@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import * as actionCreators from '../../store/action/action'
+import {saveTokenExpired} from '../../store/action/action'
 
 class ModalRefreshToken extends React.Component { 
 
@@ -35,9 +35,13 @@ const mapStateToProps = state => {
     }
 };
 
+// const mapDispatchToProps = dispatch => bindActionCreators({
+//     storeTokenExpired
+// }, dispatch);
+
 const mapDispatchToProps = dispatch => {
     return {
-        storeTokenExpired : (isTokenExpired) => actionCreators.storeTokenExpired(isTokenExpired)
+        storeTokenExpired : (isExpired) => { dispatch(saveTokenExpired(isExpired))}
     }
 };
 
