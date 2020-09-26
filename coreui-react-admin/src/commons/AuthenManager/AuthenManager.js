@@ -14,7 +14,7 @@ class AuthenManager {
         if (typeof errorCallback !== 'undefined') {
           errorCallback(error);
         }
-      });
+      }); 
   }
 
   logout(successCallback, errorCallback) {
