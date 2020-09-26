@@ -4,7 +4,7 @@
 ## Technologies
 
 - ### Back-end (Spring Boot 2) 
-  - #### Authentication With JSON Web Tokens (JWT)
+  - #### Authentication with JSON Web Tokens (JWT)
 - ### Font-end (ReactJS) 
 
 ### Reference 
