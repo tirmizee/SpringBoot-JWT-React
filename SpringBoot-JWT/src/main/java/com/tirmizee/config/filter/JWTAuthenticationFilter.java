@@ -59,6 +59,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	    this.authenticationManager = authenticationManager;
 	}
 	
+	public JWTAuthenticationFilter(JWTAuthenticationFilterBuilder builder) {
+		this.objectMapper = builder.objectMapper;
+		this.jwtProvider = builder.jwtProvider;
+		this.jwtService = builder.jwtService;
+	    this.authenticationManager = builder.authenticationManager;
+	}
+
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
@@ -144,6 +151,39 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		response.addHeader(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
 		response.getOutputStream().print(objectMapper.writeValueAsString(responseData));
+		
+	}
+	
+	public static class JWTAuthenticationFilterBuilder {
+		
+		private ObjectMapper objectMapper;
+		private JWTProvider jwtProvider;
+		private JWTService jwtService;
+		private AuthenticationManager authenticationManager;
+		
+		public JWTAuthenticationFilterBuilder mapper(ObjectMapper objectMapper) {
+			this.objectMapper = objectMapper;
+			return this;
+		}
+		
+		public JWTAuthenticationFilterBuilder jwtProvider(JWTProvider jwtProvider) {
+			this.jwtProvider = jwtProvider;
+			return this;
+		}
+		
+		public JWTAuthenticationFilterBuilder jwtService(JWTService jwtService) {
+			this.jwtService = jwtService;
+			return this;
+		}
+		
+		public JWTAuthenticationFilterBuilder authenticationManager(AuthenticationManager authenticationManager) {
+			this.authenticationManager = authenticationManager;
+			return this;
+		}
+		
+		public JWTAuthenticationFilter build() {
+			return new JWTAuthenticationFilter(this);
+		}
 		
 	}
     

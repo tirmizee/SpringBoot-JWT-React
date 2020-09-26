@@ -22,15 +22,15 @@ public class SearchUserSpecification extends SearchPageSpecification<SearchCrite
 
 	private static final long serialVersionUID = 1L;
 
-	public SearchUserSpecification(SearchCriteria<UserCriteria> serachBody) {
-		super(serachBody);
+	public SearchUserSpecification(SearchCriteria<UserCriteria> serach) {
+		super(serach);
 	}
 
 	@Override
 	public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder,
 			SearchCriteria<UserCriteria> searchCriteria) {
 		
-		Join<User, Profile> profile = root.join("profile", JoinType.INNER);
+//		Join<User, Profile> profile = root.join("profile", JoinType.INNER);
 		
 		UserCriteria userCriteria = searchCriteria.getSearch(); 
 		List<Predicate> predicates = new LinkedList<>();
@@ -43,7 +43,7 @@ public class SearchUserSpecification extends SearchPageSpecification<SearchCrite
 		
 		String firstName = userCriteria.getFirstName();
 		if (!StringUtils.isBlank(firstName)) {
-			Predicate likeFirstname = criteriaBuilder.like(profile.get("firstName"), "%" + firstName + "%");
+			Predicate likeFirstname = criteriaBuilder.like(root.get("profile.firstName"), "%" + firstName + "%");
 			predicates.add(likeFirstname);
 		}
 		

@@ -19,7 +19,7 @@ public class LogoutController {
 	@GetMapping
 	public Object logout() {
 		UserDetailsImpl currentUser = CurrentUser.getDetail();
-		jwtService.addBlackListToken(currentUser.getJti(),currentUser.getExp());
+		jwtService.addBlackListToken(currentUser.getJti(), currentUser.getExp());
 		return jwtService.allBlackList();
 	}
 

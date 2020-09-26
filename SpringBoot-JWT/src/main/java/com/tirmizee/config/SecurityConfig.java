@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,11 +28,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tirmizee.component.JWTProvider;
 import com.tirmizee.config.filter.JWTAuthenticationFilter;
 import com.tirmizee.config.filter.JWTAuthorizationFilter;
-import com.tirmizee.config.filter.JWTHeaderFilter;
+import com.tirmizee.config.filter.HeaderFilter;
 import com.tirmizee.config.filter.RequestLoggingFilter;
 import com.tirmizee.config.filter.ServerTimeoutFilter;
+import com.tirmizee.config.security.JWTAccessDeniedHandler;
 import com.tirmizee.config.security.JWTAuthenticationEntryPoint;
-import com.tirmizee.config.security.UserDetailsAuthenticationProvider;
+import com.tirmizee.config.security.JWTAuthenticationProvider;
 import com.tirmizee.service.JWTService;
 
 /**
@@ -39,7 +41,11 @@ import com.tirmizee.service.JWTService;
  *
  */
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
+@EnableGlobalMethodSecurity(
+	prePostEnabled = true,
+	jsr250Enabled = true, 
+	securedEnabled = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -49,13 +55,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTService jwtService;
 	
 	@Autowired
+	private HeaderFilter jwtHeaderFilter;
+	
+	@Autowired
 	private ObjectMapper objectMapper;
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
-	@Autowired
-	private JWTHeaderFilter jwtHeaderFilter;
 	
 	@Autowired
 	private ServerTimeoutFilter serverTimeoutFilter;
@@ -64,6 +70,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private RequestLoggingFilter requestLoggingFilter;
 
 	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
+	
+	@Autowired
+	private JWTAccessDeniedHandler accessDeniedHandler;
+	
+	@Autowired
 	private JWTAuthenticationEntryPoint authenticationEntryPointImpl;
 
 	@Bean
@@ -71,16 +83,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
 	}
 	
-	@Bean
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher() {
-        return new DefaultAuthenticationEventPublisher();
-    }
-	
 	@Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-        	.authenticationProvider(authenticationProvider());
-//        	.authenticationEventPublisher(authenticationEventPublisher());
+        	.authenticationProvider(authenticationProvider())
+        	.authenticationEventPublisher(authenticationEventPublisher());
     }
 
 	@Override
@@ -94,17 +101,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
+	/*
+	 * https://github.com/spring-projects/spring-security/pull/7802
+	 */
+	private DefaultAuthenticationEventPublisher authenticationEventPublisher() {
+        return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+    }
+	
 	private AuthenticationProvider authenticationProvider() {
-		UserDetailsAuthenticationProvider userDetailsAuthenticationProvider = new UserDetailsAuthenticationProvider();
-		userDetailsAuthenticationProvider.setHideUserNotFoundExceptions(false);
-		userDetailsAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-		userDetailsAuthenticationProvider.setUserDetailsService(userDetailsService);
-		return userDetailsAuthenticationProvider;
+		JWTAuthenticationProvider jwtAuthenticationProvider = new JWTAuthenticationProvider();
+		jwtAuthenticationProvider.setHideUserNotFoundExceptions(false);
+		jwtAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+		jwtAuthenticationProvider.setUserDetailsService(userDetailsService);
+		return jwtAuthenticationProvider;
 	}
 	
 	private JWTAuthenticationFilter jtwAuthenticationFilter() throws Exception {
-		JWTAuthenticationFilter authenticationFilter = new JWTAuthenticationFilter(
-			authenticationManagerBean(), jwtProvider, jwtService, objectMapper);
+		JWTAuthenticationFilter authenticationFilter = new JWTAuthenticationFilter.JWTAuthenticationFilterBuilder()
+			.authenticationManager(authenticationManagerBean())
+			.jwtProvider(jwtProvider)
+			.jwtService(jwtService)
+			.mapper(objectMapper)
+			.build();
 		authenticationFilter.setFilterProcessesUrl("/auth/token");
 		return authenticationFilter;
 	}
@@ -142,6 +160,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 				.and()
 			.exceptionHandling()
+				.accessDeniedHandler(accessDeniedHandler)
 				.authenticationEntryPoint(authenticationEntryPointImpl)
 				.and()
 			.sessionManagement()
@@ -150,7 +169,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.addFilter(jtwAuthenticationFilter())
 			.addFilterAfter(jtwAuthorizationFilter(), JWTAuthenticationFilter.class)
 			.addFilterBefore(jwtHeaderFilter, JWTAuthenticationFilter.class)
-			.addFilterBefore(serverTimeoutFilter, JWTHeaderFilter.class)
+			.addFilterBefore(serverTimeoutFilter, HeaderFilter.class)
 			.addFilterBefore(requestLoggingFilter, ServerTimeoutFilter.class);
 	}
 	

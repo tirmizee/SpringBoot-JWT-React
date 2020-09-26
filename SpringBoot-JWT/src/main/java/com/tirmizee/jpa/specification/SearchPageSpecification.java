@@ -44,10 +44,11 @@ public abstract class SearchPageSpecification<S extends SearchPageable, T> exten
 	 * OVerride this method. if you want to customize Pageable.
 	 */
 	public Pageable getPageable() {
-		Integer page = getSearch().getPage();
-		Integer size = getSearch().getSize();
-		String sort = StringUtils.defaultString(getSearch().getSort(), DEFUALT_DERECTION_ASC);
-		String sortField = this.sortProperty(this.getSearch().getSortField());
+		SearchPageable searchPageable = super.getSearch();
+		Integer page = searchPageable.getPage();
+		Integer size = searchPageable.getSize();
+		String sort = StringUtils.defaultString(searchPageable.getSort(), DEFUALT_DERECTION_ASC);
+		String sortField = StringUtils.defaultString(this.sortProperty(searchPageable.getSortField()), "id");
 		return PageRequest.of(page, size, buildSort(sort, sortField));
 	}
 

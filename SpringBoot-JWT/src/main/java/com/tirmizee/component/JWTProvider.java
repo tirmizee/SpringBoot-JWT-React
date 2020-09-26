@@ -1,6 +1,8 @@
 package com.tirmizee.component;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.tirmizee.config.properties.JWTProperty;
 import com.tirmizee.config.security.UserDetailsImpl;
+import com.tirmizee.utils.DateUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

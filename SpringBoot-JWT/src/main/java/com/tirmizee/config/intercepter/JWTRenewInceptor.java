@@ -1,5 +1,8 @@
 package com.tirmizee.config.intercepter;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tirmizee.component.JWTProvider;
 import com.tirmizee.constant.JWTConstants;
+import com.tirmizee.utils.DateUtils;
+
+import io.jsonwebtoken.Claims;
 
 @Component
 public class JWTRenewInceptor implements HandlerInterceptor {
@@ -27,9 +33,21 @@ public class JWTRenewInceptor implements HandlerInterceptor {
 		LOGGER.info("JWTRenewInceptor preHandle : {}", Thread.currentThread().getName());
 		
 		String token = (String) request.getAttribute(JWTConstants.TOKEN_ATTRIBUTE);
-		
 		if (token != null) {
-			String renewToken = jwtProvider.refreshToken(token);
+			
+			Claims claims = jwtProvider.getClaim(token);
+			
+			LocalDateTime nowDate = LocalDateTime.now();
+			LocalDateTime expiredDate = DateUtils.toLocalDateTime(claims.getExpiration());
+			long renewDuration = Duration.ofMinutes(1).toMillis();
+			long expiredDuration = Duration.between(nowDate, expiredDate).toMillis();
+			LOGGER.info("renewDuration {}", renewDuration);
+			LOGGER.info("expiredDuration {}", expiredDuration);
+			
+			boolean shouldRenewToken = expiredDuration < renewDuration;
+			LOGGER.info("shouldRenewToken {}", shouldRenewToken);
+			
+			String renewToken = shouldRenewToken ? jwtProvider.refreshToken(claims) : token;
 			response.setHeader("Token-Renew", renewToken);
 		}
 

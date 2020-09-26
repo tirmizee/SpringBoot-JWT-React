@@ -27,10 +27,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		
 		registry.addInterceptor(new LocaleHeaderChangeInterceptor())
 			.addPathPatterns("/**")
+			.excludePathPatterns("/auth/token/revoke")
 			.order(1);
 		
 		registry.addInterceptor(jwtRenewInceptor)
 			.addPathPatterns("/**")
+			.excludePathPatterns("/auth/token/revoke")
 			.order(2);
 	
 	}

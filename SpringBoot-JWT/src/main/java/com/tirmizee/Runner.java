@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.tirmizee.jpa.entities.Category;
 import com.tirmizee.jpa.entities.Product;
@@ -39,6 +41,9 @@ public class Runner implements CommandLineRunner {
 		product.setPrice(BigDecimal.valueOf(1200));
 		product.setCreateDate(new Date());
 		product.setCategory(category);
+		
+		SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+		SecurityContextHolder contextHolder;
 		
 		System.out.println("Default Locale:   " + Locale.getDefault());
 		System.out.println("Default Charset:  " + Charset.defaultCharset());

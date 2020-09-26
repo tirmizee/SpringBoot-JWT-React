@@ -13,9 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
-public class JWTHeaderFilter extends OncePerRequestFilter {
+public class HeaderFilter extends OncePerRequestFilter {
 	
-	public static final Logger logger = LoggerFactory.getLogger(JWTHeaderFilter.class);
+	public static final Logger logger = LoggerFactory.getLogger(HeaderFilter.class);
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

@@ -42,7 +42,7 @@ public class UserController {
 	
 	@PostMapping(path = "/all")
 	public Page<UserDTO> findAll(@RequestBody SearchCriteria<UserCriteria> search) {
-		System.out.println(search.getSearch());
+
 		SearchUserSpecification specification = new SearchUserSpecification(search);
 		Page<User> page = userRepository.findAll(specification, specification.getPageable());
 		Page<UserDTO> pageDTO = page.map((user) -> {

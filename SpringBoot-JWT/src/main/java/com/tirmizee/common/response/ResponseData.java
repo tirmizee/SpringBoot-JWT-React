@@ -26,5 +26,12 @@ public class ResponseData<T> implements Serializable {
 		responseData.setData(data);
 		return responseData;
 	}
+	
+	public static <T> ResponseData<T> failure(T data) {
+		ResponseData<T> responseData = new ResponseData<T>();
+		responseData.setStatus(false);
+		responseData.setData(data);
+		return responseData;
+	}
 
 }
