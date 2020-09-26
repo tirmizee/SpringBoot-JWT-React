@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter,HashRouter, Route, Switch } from 'react-router-dom';
-import { renderRoutes } from 'react-router-config';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
 import './App.scss';
-import ProtectedRoute from './components/ProtectedRoute'
-import Axios from 'axios';
+import ProtectedRoute from './components/ProtectedRoute';
+
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 

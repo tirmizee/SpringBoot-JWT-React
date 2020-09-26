@@ -7,7 +7,7 @@ import {POST,GET} from '../../commons/APIManager';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import DataTable from 'react-data-table-component';
-import {Segment, Loader } from 'semantic-ui-react'
+import {Segment, Loader, Image } from 'semantic-ui-react'
 
 import './index.css';
 
@@ -18,11 +18,25 @@ const actions = (<div>
   <i className="fa fa-plus fa-md"></i>&nbsp;
   <i className="fa fa-wrench fa-md"></i>
 </div>);
+
 const columns = ( handleClick, handleClickButton) => [
   {
     name: 'Order',
     selector: 'order',
     maxWidth: '120px'
+  },
+  {
+    name: 'Thumbnail',
+    selector: 'thumbnail',
+    grow: 0,
+    cell: row => {
+      let ran = row.id%100;
+      return (
+        <div style={{margin:'5px'}}>
+          <Image width={50} src={`https://randomuser.me/api/portraits/men/${ran}.jpg`} circular />
+        </div>
+      );
+    },
   },
   {
     name: 'Username',
@@ -170,7 +184,7 @@ class Users extends Component {
           loading: false,
           data: users,
           perPage : perPage, 
-          totalRows : response.totalElements
+          totalRows : response.data.totalElements
         }
 
         this.setState(state);
@@ -235,7 +249,7 @@ class Users extends Component {
           loading: false,
           data: users,
           perPage : perPage, 
-          totalRows : response.totalElements
+          totalRows : response.data.totalElements
         });
       }
         
@@ -263,7 +277,7 @@ class Users extends Component {
         this.setState({
           loading: false,
           data: users,
-          // totalRows : response.totalElements
+          totalRows : response.data.totalElements
         });
       }
     });
@@ -455,6 +469,7 @@ class Users extends Component {
                           columns={columns(this.handleClickButton, this.handleClickButton)}
                           progressPending={loading}
                           actions={actions}
+                          sortServer
                           sortIcon={sortIcon}
                           onSort={this.handleSort}
                           customStyles={styles}
