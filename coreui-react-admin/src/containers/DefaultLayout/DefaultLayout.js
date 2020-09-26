@@ -46,7 +46,7 @@ class DefaultLayout extends Component {
     return (
       <div className="app">
         
-        <ModalRefreshToken/>
+        {/* <ModalRefreshToken/> */}
 
         <AppHeader fixed>
           <Suspense  fallback={this.loading()}>

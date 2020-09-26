@@ -48,10 +48,15 @@ class AuthenManager {
 
   isAuthenticated() {
     let token = localStorage.getItem(ACCESS_TOKEN);
-    if(token == null) return false;
-    let tokenExpried = JSON.parse(atob(token.split('.')[1])).exp;
-    let dateExpried = new Date(tokenExpried);
-    return dateExpried >= new Date() / 1000;
+    if(!token || token === 'undefined' || token === null) {
+      console.log('token false')
+      return false;
+    } else {
+      console.log('token true')
+      let tokenExpried = JSON.parse(atob(token.split('.')[1])).exp;
+      let dateExpried = new Date(tokenExpried);
+      return dateExpried >= new Date() / 1000;
+    }
   }
 
 }

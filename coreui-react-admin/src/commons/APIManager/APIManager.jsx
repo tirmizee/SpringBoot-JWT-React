@@ -23,9 +23,9 @@ const errorHandler = error => {
 }
 
 const successHandler = (response) => {
-  console.log('Token-Renew : interceptors');
-  if(response.headers['Token-Renew']){
-    localStorage.setItem(ACCESS_TOKEN, response.headers['Token-Renew']);
+  if(response.headers['token-renew']){
+    console.log('Token-Renew : interceptors');
+    localStorage.setItem(ACCESS_TOKEN, response.headers['token-renew']);
   }
   return response
 }
