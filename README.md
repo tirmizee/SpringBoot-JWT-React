@@ -7,6 +7,8 @@
   - #### Authentication with JSON Web Tokens (JWT)
 - ### Font-end (ReactJS) 
 
+- ### Database (Oracle)
+
 ### Reference 
 
 - https://coreui.io/docs/2.1/getting-started/introduction/
