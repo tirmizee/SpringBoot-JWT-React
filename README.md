@@ -1,15 +1,6 @@
 # SpringBoot-React-JWT
 
 
-## Technologies
-
-- ### Back-end (Spring Boot 2) 
-  - #### Authentication with JSON Web Tokens (JWT)
-  - #### Lock user account after (N) failed login attempts (Prevent Brute Force Attacks)
-- ### Font-end (ReactJS) 
-
-- ### Database (Oracle)
-
 ### Reference 
 
 - https://coreui.io/docs/2.1/getting-started/introduction/
