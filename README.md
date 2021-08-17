@@ -2,6 +2,7 @@
 
 ### Examples
 
+- Authentication and Authorization with JWT using Spring Security.
 - Revoking Access token when User logout. 
 
 ### Reference 
